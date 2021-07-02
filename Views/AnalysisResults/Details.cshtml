@@ -1,0 +1,39 @@
+﻿@model DuneDaqMonitoringPlatform.Models.AnalysisResult
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>AnalysisResult</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.DataPath.Data.Name)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.DataPath.Data.Name)
+        </dd><dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.AnalysisParameter.Analyse.Name)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.AnalysisParameter.Analyse.Name)
+        </dd><dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Decision)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Decision)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Confidence)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Confidence)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>

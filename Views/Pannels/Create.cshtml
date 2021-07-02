@@ -1,0 +1,34 @@
+﻿@model DuneDaqMonitoringPlatform.Models.Pannel
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>Pannel</h4>
+
+
+<div class="form-group">
+    <div class="col-6">
+        @Html.DropDownList("dataDisplayId", new SelectList(ViewBag.DataDisplays, "Id", "Name"), new { @class = "form-control" })
+        <input type="button" id="sendButton" value="Add data display" />
+    </div>
+</div>
+
+<div class="row" id="plotsContainer">
+    <script>var dataDisplayIdList = []</script>
+</div>
+
+<div class="form-group">
+
+    <input type="button" id="saveButton" value="Save current view to pannel" />
+    Pannel name: <input type="text" id="pannelName" />
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+<script src="~/lib/signalr/dist/browser/signalr.js"></script>
+<script src="~/js/chart.js"></script>
