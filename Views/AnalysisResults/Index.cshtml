@@ -1,0 +1,45 @@
+﻿@model IEnumerable<DuneDaqMonitoringPlatform.Models.AnalysisResult>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Data
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.AnalysisParameter.Analyse.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Decision)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                Analyse
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AnalysisParameter.Analyse.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Decision)
+            </td>
+      
+            <td>
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

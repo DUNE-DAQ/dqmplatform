@@ -1,0 +1,30 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+
+<div class="text-center">
+    <h1 class="display-3">DUNE Data Quality Monitoring platform</h1>
+    </br>
+
+    <p class="text-info">First time here? That's were to start:</p>
+</div>
+
+<div class="row">
+    <div class="col-4">
+        <a class="nav-link text-dark" asp-area="" asp-controller="DataDisplays" asp-action="Index" ><b>Data displays</b></a>
+        <p class="text-info">Data displays are a way of representing selected data. It allows you to choose a certain data and decide parameters as its display length or type.</p>
+    </div>   
+    <div class="col-4">
+        <a class="nav-link text-dark" asp-area="" asp-controller="Pannels" asp-action="Create"><b>Empty pannel</b></a>
+        <p class="text-info">Pannels are a collection of data displays (formated data), this page allows you to select data displays and get their updates in real time. You don't want to start from scratch every time? Save your pannel and access it any time.</p>
+    </div>   
+    <div class="col-4">
+        <a class="nav-link text-dark" asp-area="" asp-controller="Pannels" asp-action="Index"><b>Pannels</b></a>
+        <p class="text-info">Have you created a pannel already, or you want to access any existign one? All pannels are listed here, find the one you need and choose "Details". Uf you have been given the access rights, you may also edit existing pannels, to add and remove data displays.</p>
+    </div>
+</div>
+
+
+<script src="~/lib/signalr/dist/browser/signalr.js"></script>
+<script src="~/js/chart.js"></script>
