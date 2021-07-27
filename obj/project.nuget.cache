@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "bdcyc5PkNNchT/NoqN12t0GRgRT76iPa5/wwdVRxicKv7TQKTo+OdQQRiG37NRw5AscCV2uMaPOwiuReX8uJqQ==",
+  "dgSpecHash": "b95P0sMBQXfMJt5P9rMiCBpVqrzdlYPVnSE8k6PvZDwmkeHW1XYj1j7kou8lcfZG8B0rNt/KusPaCVmn1EchbA==",
   "success": true,
-  "projectFilePath": "C:\\Users\\yadonon\\source\\repos\\DuneDaqMonitoring\\DuneDaqMonitoringPlatform\\DuneDaqMonitoringPlatform.csproj",
+  "projectFilePath": "C:\\Users\\yadonon\\source\\repos\\DuneDaqApps-Secretless\\DuneDaqMonitoring\\DuneDaqMonitoringPlatform\\DuneDaqMonitoringPlatform.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\yadonon\\.nuget\\packages\\confluent.kafka\\1.6.3\\confluent.kafka.1.6.3.nupkg.sha512",
     "C:\\Users\\yadonon\\.nuget\\packages\\librdkafka.redist\\1.6.1\\librdkafka.redist.1.6.1.nupkg.sha512",

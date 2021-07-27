@@ -32,13 +32,9 @@ namespace DuneDaqMonitoringPlatform.Services
             #endif
             
             ConsumerConfig consumerConfig = new ConsumerConfig()
-            {        
+            {
                 BootstrapServers = configuration["KafkaConfig:Logging:BootstrapServers"],
-                GroupId = configuration["KafkaConfig:Logging:BootstrapServers"],
-                SecurityProtocol = SecurityProtocol.Ssl,
-                SslCaLocation = path + configuration["KafkaConfig:Logging:SslCaLocation"],
-                SslCertificateLocation = path + configuration["KafkaConfig:Logging:SslCertificateLocation"],
-                SslKeyLocation = path + configuration["KafkaConfig:Logging:SslKeyLocation"],
+                GroupId = configuration["KafkaConfig:Logging:GroupId"],
             };
             kafkaConsumer = new ConsumerBuilder<string, string>(consumerConfig).Build();
             topic = configuration["KafkaConfig:Topics:MessengerTopic"];

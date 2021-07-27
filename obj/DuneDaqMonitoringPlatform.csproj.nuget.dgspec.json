@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\yadonon\\source\\repos\\DuneDaqMonitoring\\DuneDaqMonitoringPlatform\\DuneDaqMonitoringPlatform.csproj": {}
+    "C:\\Users\\yadonon\\source\\repos\\DuneDaqApps-Secretless\\DuneDaqMonitoring\\DuneDaqMonitoringPlatform\\DuneDaqMonitoringPlatform.csproj": {}
   },
   "projects": {
-    "C:\\Users\\yadonon\\source\\repos\\DuneDaqMonitoring\\DuneDaqMonitoringPlatform\\DuneDaqMonitoringPlatform.csproj": {
+    "C:\\Users\\yadonon\\source\\repos\\DuneDaqApps-Secretless\\DuneDaqMonitoring\\DuneDaqMonitoringPlatform\\DuneDaqMonitoringPlatform.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\yadonon\\source\\repos\\DuneDaqMonitoring\\DuneDaqMonitoringPlatform\\DuneDaqMonitoringPlatform.csproj",
+        "projectUniqueName": "C:\\Users\\yadonon\\source\\repos\\DuneDaqApps-Secretless\\DuneDaqMonitoring\\DuneDaqMonitoringPlatform\\DuneDaqMonitoringPlatform.csproj",
         "projectName": "DuneDaqMonitoringPlatform",
-        "projectPath": "C:\\Users\\yadonon\\source\\repos\\DuneDaqMonitoring\\DuneDaqMonitoringPlatform\\DuneDaqMonitoringPlatform.csproj",
+        "projectPath": "C:\\Users\\yadonon\\source\\repos\\DuneDaqApps-Secretless\\DuneDaqMonitoring\\DuneDaqMonitoringPlatform\\DuneDaqMonitoringPlatform.csproj",
         "packagesPath": "C:\\Users\\yadonon\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\yadonon\\source\\repos\\DuneDaqMonitoring\\DuneDaqMonitoringPlatform\\obj\\",
+        "outputPath": "C:\\Users\\yadonon\\source\\repos\\DuneDaqApps-Secretless\\DuneDaqMonitoring\\DuneDaqMonitoringPlatform\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\yadonon\\AppData\\Roaming\\NuGet\\NuGet.Config",

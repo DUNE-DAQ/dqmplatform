@@ -13,7 +13,6 @@ using Microsoft.EntityFrameworkCore.Internal;
 
 namespace DuneDaqMonitoringPlatform.Controllers
 {
-    [Authorize(Roles = "Administrator, User")]
     public class DataDisplaysController : Controller
     {
         private readonly MonitoringDbContext _context;

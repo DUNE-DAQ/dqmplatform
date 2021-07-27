@@ -15,7 +15,6 @@ using DuneDaqMonitoringPlatform.ViewModels;
 namespace DuneDaqMonitoringPlatform.Controllers
 {
 
-    [Authorize(Roles = "Administrator")]
     public class AspRolesController : Controller
     {
 
