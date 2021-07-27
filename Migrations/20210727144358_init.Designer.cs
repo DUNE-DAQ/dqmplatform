@@ -10,15 +10,15 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DuneDaqMonitoringPlatform.Migrations
 {
     [DbContext(typeof(MonitoringDbContext))]
-    [Migration("20210602145659_ondeletecascade")]
-    partial class ondeletecascade
+    [Migration("20210727144358_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn)
-                .HasAnnotation("ProductVersion", "3.1.13")
+                .HasAnnotation("ProductVersion", "3.1.15")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             modelBuilder.Entity("DuneDaqMonitoringPlatform.Models.Analyse", b =>
@@ -186,9 +186,6 @@ namespace DuneDaqMonitoringPlatform.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("AnalyseId")
-                        .HasColumnType("uuid");
-
                     b.Property<Guid?>("DataTypeId")
                         .HasColumnType("uuid");
 
@@ -204,13 +201,32 @@ namespace DuneDaqMonitoringPlatform.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AnalyseId");
-
                     b.HasIndex("DataTypeId");
 
                     b.HasIndex("SamplingProfileId");
 
                     b.ToTable("DataDisplay");
+                });
+
+            modelBuilder.Entity("DuneDaqMonitoringPlatform.Models.DataDisplayAnalyse", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("AnalyseId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("DataDisplayId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AnalyseId");
+
+                    b.HasIndex("DataDisplayId");
+
+                    b.ToTable("DataDisplayAnalyse");
                 });
 
             modelBuilder.Entity("DuneDaqMonitoringPlatform.Models.DataDisplayData", b =>
@@ -378,11 +394,13 @@ namespace DuneDaqMonitoringPlatform.Migrations
                 {
                     b.HasOne("DuneDaqMonitoringPlatform.Models.AnalysisSource", "AnalysisSource")
                         .WithMany("Analyses")
-                        .HasForeignKey("AnalysisSourceId");
+                        .HasForeignKey("AnalysisSourceId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("DuneDaqMonitoringPlatform.Models.Data", "Data")
                         .WithMany("Analyses")
-                        .HasForeignKey("DataId");
+                        .HasForeignKey("DataId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("DuneDaqMonitoringPlatform.Models.AnalysisPannel", b =>
@@ -393,22 +411,26 @@ namespace DuneDaqMonitoringPlatform.Migrations
 
                     b.HasOne("DuneDaqMonitoringPlatform.Models.DataDisplay", "DataDisplay")
                         .WithMany("AnalysisPannels")
-                        .HasForeignKey("DataDisplayId");
+                        .HasForeignKey("DataDisplayId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("DuneDaqMonitoringPlatform.Models.Pannel", "Pannel")
                         .WithMany("AnalysisPannels")
-                        .HasForeignKey("PannelId");
+                        .HasForeignKey("PannelId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("DuneDaqMonitoringPlatform.Models.AnalysisParameter", b =>
                 {
                     b.HasOne("DuneDaqMonitoringPlatform.Models.Analyse", "Analyse")
                         .WithMany("AnalysisParameters")
-                        .HasForeignKey("AnalyseId");
+                        .HasForeignKey("AnalyseId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("DuneDaqMonitoringPlatform.Models.Parameter", "Parameter")
                         .WithMany("AnalysisParameters")
-                        .HasForeignKey("ParameterId");
+                        .HasForeignKey("ParameterId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("DuneDaqMonitoringPlatform.Models.AnalysisResult", b =>
@@ -419,47 +441,63 @@ namespace DuneDaqMonitoringPlatform.Migrations
 
                     b.HasOne("DuneDaqMonitoringPlatform.Models.DataPath", "DataPath")
                         .WithMany("AnalysisResults")
-                        .HasForeignKey("DataPathId");
+                        .HasForeignKey("DataPathId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("DuneDaqMonitoringPlatform.Models.Data", b =>
                 {
                     b.HasOne("DuneDaqMonitoringPlatform.Models.DataSource", "DataSource")
                         .WithMany("Datas")
-                        .HasForeignKey("DataSourceId");
+                        .HasForeignKey("DataSourceId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("DuneDaqMonitoringPlatform.Models.DataDisplay", b =>
                 {
-                    b.HasOne("DuneDaqMonitoringPlatform.Models.Analyse", "Analyse")
-                        .WithMany("DataDisplays")
-                        .HasForeignKey("AnalyseId");
-
                     b.HasOne("DuneDaqMonitoringPlatform.Models.DataType", "DataType")
                         .WithMany("DataDisplays")
-                        .HasForeignKey("DataTypeId");
+                        .HasForeignKey("DataTypeId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("DuneDaqMonitoringPlatform.Models.SamplingProfile", "SamplingProfile")
                         .WithMany("DataDisplays")
-                        .HasForeignKey("SamplingProfileId");
+                        .HasForeignKey("SamplingProfileId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("DuneDaqMonitoringPlatform.Models.DataDisplayAnalyse", b =>
+                {
+                    b.HasOne("DuneDaqMonitoringPlatform.Models.Analyse", "Analyse")
+                        .WithMany("DataDisplayAnalyses")
+                        .HasForeignKey("AnalyseId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("DuneDaqMonitoringPlatform.Models.DataDisplay", "DataDisplay")
+                        .WithMany("DataDisplayAnalyses")
+                        .HasForeignKey("DataDisplayId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("DuneDaqMonitoringPlatform.Models.DataDisplayData", b =>
                 {
                     b.HasOne("DuneDaqMonitoringPlatform.Models.DataDisplay", "DataDisplay")
                         .WithMany("DataDisplayDatas")
-                        .HasForeignKey("DataDisplayId");
+                        .HasForeignKey("DataDisplayId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("DuneDaqMonitoringPlatform.Models.Data", "Data")
                         .WithMany("DataDisplayDatas")
-                        .HasForeignKey("DataId");
+                        .HasForeignKey("DataId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("DuneDaqMonitoringPlatform.Models.DataPath", b =>
                 {
                     b.HasOne("DuneDaqMonitoringPlatform.Models.Data", "Data")
                         .WithMany("DataPaths")
-                        .HasForeignKey("DataId");
+                        .HasForeignKey("DataId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618
         }

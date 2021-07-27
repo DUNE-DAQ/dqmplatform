@@ -16,7 +16,7 @@ namespace DuneDaqMonitoringPlatform.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn)
-                .HasAnnotation("ProductVersion", "3.1.13")
+                .HasAnnotation("ProductVersion", "3.1.15")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             modelBuilder.Entity("DuneDaqMonitoringPlatform.Models.Analyse", b =>
@@ -184,9 +184,6 @@ namespace DuneDaqMonitoringPlatform.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("AnalyseId")
-                        .HasColumnType("uuid");
-
                     b.Property<Guid?>("DataTypeId")
                         .HasColumnType("uuid");
 
@@ -202,13 +199,32 @@ namespace DuneDaqMonitoringPlatform.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AnalyseId");
-
                     b.HasIndex("DataTypeId");
 
                     b.HasIndex("SamplingProfileId");
 
                     b.ToTable("DataDisplay");
+                });
+
+            modelBuilder.Entity("DuneDaqMonitoringPlatform.Models.DataDisplayAnalyse", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("AnalyseId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("DataDisplayId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AnalyseId");
+
+                    b.HasIndex("DataDisplayId");
+
+                    b.ToTable("DataDisplayAnalyse");
                 });
 
             modelBuilder.Entity("DuneDaqMonitoringPlatform.Models.DataDisplayData", b =>
@@ -437,11 +453,6 @@ namespace DuneDaqMonitoringPlatform.Migrations
 
             modelBuilder.Entity("DuneDaqMonitoringPlatform.Models.DataDisplay", b =>
                 {
-                    b.HasOne("DuneDaqMonitoringPlatform.Models.Analyse", "Analyse")
-                        .WithMany("DataDisplays")
-                        .HasForeignKey("AnalyseId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
                     b.HasOne("DuneDaqMonitoringPlatform.Models.DataType", "DataType")
                         .WithMany("DataDisplays")
                         .HasForeignKey("DataTypeId")
@@ -450,6 +461,19 @@ namespace DuneDaqMonitoringPlatform.Migrations
                     b.HasOne("DuneDaqMonitoringPlatform.Models.SamplingProfile", "SamplingProfile")
                         .WithMany("DataDisplays")
                         .HasForeignKey("SamplingProfileId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("DuneDaqMonitoringPlatform.Models.DataDisplayAnalyse", b =>
+                {
+                    b.HasOne("DuneDaqMonitoringPlatform.Models.Analyse", "Analyse")
+                        .WithMany("DataDisplayAnalyses")
+                        .HasForeignKey("AnalyseId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("DuneDaqMonitoringPlatform.Models.DataDisplay", "DataDisplay")
+                        .WithMany("DataDisplayAnalyses")
+                        .HasForeignKey("DataDisplayId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
