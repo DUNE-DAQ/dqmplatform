@@ -122,6 +122,15 @@ namespace DuneDaqMonitoringPlatform.Data
                 .WithOne(a => a.DataSource)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            //Seeding database
+            builder.Entity<DataType>().HasData(new DataType { Id = Guid.NewGuid(), Description = "Default heatmap plotting", Name = "Heatmap plot", PlottingType = "heatmap" });
+            builder.Entity<DataType>().HasData(new DataType { Id = Guid.NewGuid(), Description = "Default histogram plotting", Name = "Histogram plot", PlottingType = "histogram" });
+            builder.Entity<DataType>().HasData(new DataType { Id = Guid.NewGuid(), Description = "Default scatter plotting, Scatter plot with lines and markers", Name = "Scatter plot with lines and markers", PlottingType = "lines+markers" });
+            builder.Entity<DataType>().HasData(new DataType { Id = Guid.NewGuid(), Description = "Scatter plot without markers (lines only)", Name = "Scatter plot with lines", PlottingType="lines" });
+            builder.Entity<DataType>().HasData(new DataType { Id = Guid.NewGuid(), Description = "Scatter plot without lines (markers only)", Name = "Scatter plot with markers", PlottingType="markers" });
+            builder.Entity<SamplingProfile>().HasData(new SamplingProfile { Id= Guid.NewGuid(), Description = "Default 1:1 sampling", Factor = 1, Name = "Default", PlottingType = "Default" });
+
+
         }
     }
 }

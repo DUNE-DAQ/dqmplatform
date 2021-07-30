@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace DuneDaqMonitoringPlatform.Migrations
 {
-    public partial class init : Migration
+    public partial class initSeed : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -171,7 +171,10 @@ namespace DuneDaqMonitoringPlatform.Migrations
                     DataId = table.Column<Guid>(nullable: true),
                     WriteTime = table.Column<string>(nullable: false),
                     Path = table.Column<string>(maxLength: 256, nullable: true),
-                    Storage = table.Column<string>(maxLength: 30, nullable: true)
+                    Storage = table.Column<string>(maxLength: 30, nullable: true),
+                    Run = table.Column<int>(nullable: false),
+                    SubRun = table.Column<int>(nullable: false),
+                    EventNumber = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -320,6 +323,23 @@ namespace DuneDaqMonitoringPlatform.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.InsertData(
+                table: "DataType",
+                columns: new[] { "Id", "Description", "Name", "PlottingType" },
+                values: new object[,]
+                {
+                    { new Guid("8d83a885-c0aa-4d36-ab49-a93c8525d3f5"), "Default heatmap plotting", "Heatmap plot", "heatmap" },
+                    { new Guid("b0ab9f47-bd2a-462b-aa24-fb52b7184885"), "Default histogram plotting", "Histogram plot", "histogram" },
+                    { new Guid("7592e161-e925-4d58-9c68-0f93431e439c"), "Default scatter plotting, Scatter plot with lines and markers", "Scatter plot with lines and markers", "lines+markers" },
+                    { new Guid("34e44dd0-7219-493e-8cd9-c63d8a0387e3"), "Scatter plot without markers (lines only)", "Scatter plot with lines", "lines" },
+                    { new Guid("0e14499d-8106-4c05-953f-e52a5f91da8b"), "Scatter plot without lines (markers only)", "Scatter plot with markers", "markers" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "SamplingProfile",
+                columns: new[] { "Id", "Description", "Factor", "Name", "PlottingType" },
+                values: new object[] { new Guid("c7b9ec99-1a44-4ef5-8b89-f6a0404fb4d4"), "Default 1:1 sampling", 1f, "Default", "Default" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Analyse_AnalysisSourceId",
