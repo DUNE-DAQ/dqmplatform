@@ -12,7 +12,6 @@ using DuneDaqMonitoringPlatform.ViewModels;
 
 namespace DuneDaqMonitoringPlatform.Controllers
 {
-    [Authorize(Roles = "Administrator, User")]
     public class PannelsController : Controller
     {
         private readonly MonitoringDbContext _context;

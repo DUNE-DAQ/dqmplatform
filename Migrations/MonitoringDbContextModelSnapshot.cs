@@ -16,7 +16,7 @@ namespace DuneDaqMonitoringPlatform.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn)
-                .HasAnnotation("ProductVersion", "3.1.13")
+                .HasAnnotation("ProductVersion", "3.1.15")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             modelBuilder.Entity("DuneDaqMonitoringPlatform.Models.Analyse", b =>
@@ -184,9 +184,6 @@ namespace DuneDaqMonitoringPlatform.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("AnalyseId")
-                        .HasColumnType("uuid");
-
                     b.Property<Guid?>("DataTypeId")
                         .HasColumnType("uuid");
 
@@ -202,13 +199,32 @@ namespace DuneDaqMonitoringPlatform.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AnalyseId");
-
                     b.HasIndex("DataTypeId");
 
                     b.HasIndex("SamplingProfileId");
 
                     b.ToTable("DataDisplay");
+                });
+
+            modelBuilder.Entity("DuneDaqMonitoringPlatform.Models.DataDisplayAnalyse", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("AnalyseId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("DataDisplayId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AnalyseId");
+
+                    b.HasIndex("DataDisplayId");
+
+                    b.ToTable("DataDisplayAnalyse");
                 });
 
             modelBuilder.Entity("DuneDaqMonitoringPlatform.Models.DataDisplayData", b =>
@@ -241,13 +257,22 @@ namespace DuneDaqMonitoringPlatform.Migrations
                     b.Property<Guid?>("DataId")
                         .HasColumnType("uuid");
 
+                    b.Property<int>("EventNumber")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Path")
                         .HasColumnType("character varying(256)")
                         .HasMaxLength(256);
 
+                    b.Property<int>("Run")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Storage")
                         .HasColumnType("character varying(30)")
                         .HasMaxLength(30);
+
+                    b.Property<int>("SubRun")
+                        .HasColumnType("integer");
 
                     b.Property<string>("WriteTime")
                         .IsRequired()
@@ -303,6 +328,43 @@ namespace DuneDaqMonitoringPlatform.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("DataType");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("8d83a885-c0aa-4d36-ab49-a93c8525d3f5"),
+                            Description = "Default heatmap plotting",
+                            Name = "Heatmap plot",
+                            PlottingType = "heatmap"
+                        },
+                        new
+                        {
+                            Id = new Guid("b0ab9f47-bd2a-462b-aa24-fb52b7184885"),
+                            Description = "Default histogram plotting",
+                            Name = "Histogram plot",
+                            PlottingType = "histogram"
+                        },
+                        new
+                        {
+                            Id = new Guid("7592e161-e925-4d58-9c68-0f93431e439c"),
+                            Description = "Default scatter plotting, Scatter plot with lines and markers",
+                            Name = "Scatter plot with lines and markers",
+                            PlottingType = "lines+markers"
+                        },
+                        new
+                        {
+                            Id = new Guid("34e44dd0-7219-493e-8cd9-c63d8a0387e3"),
+                            Description = "Scatter plot without markers (lines only)",
+                            Name = "Scatter plot with lines",
+                            PlottingType = "lines"
+                        },
+                        new
+                        {
+                            Id = new Guid("0e14499d-8106-4c05-953f-e52a5f91da8b"),
+                            Description = "Scatter plot without lines (markers only)",
+                            Name = "Scatter plot with markers",
+                            PlottingType = "markers"
+                        });
                 });
 
             modelBuilder.Entity("DuneDaqMonitoringPlatform.Models.Pannel", b =>
@@ -370,6 +432,16 @@ namespace DuneDaqMonitoringPlatform.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("SamplingProfile");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("c7b9ec99-1a44-4ef5-8b89-f6a0404fb4d4"),
+                            Description = "Default 1:1 sampling",
+                            Factor = 1f,
+                            Name = "Default",
+                            PlottingType = "Default"
+                        });
                 });
 
             modelBuilder.Entity("DuneDaqMonitoringPlatform.Models.Analyse", b =>
@@ -437,11 +509,6 @@ namespace DuneDaqMonitoringPlatform.Migrations
 
             modelBuilder.Entity("DuneDaqMonitoringPlatform.Models.DataDisplay", b =>
                 {
-                    b.HasOne("DuneDaqMonitoringPlatform.Models.Analyse", "Analyse")
-                        .WithMany("DataDisplays")
-                        .HasForeignKey("AnalyseId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
                     b.HasOne("DuneDaqMonitoringPlatform.Models.DataType", "DataType")
                         .WithMany("DataDisplays")
                         .HasForeignKey("DataTypeId")
@@ -450,6 +517,19 @@ namespace DuneDaqMonitoringPlatform.Migrations
                     b.HasOne("DuneDaqMonitoringPlatform.Models.SamplingProfile", "SamplingProfile")
                         .WithMany("DataDisplays")
                         .HasForeignKey("SamplingProfileId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("DuneDaqMonitoringPlatform.Models.DataDisplayAnalyse", b =>
+                {
+                    b.HasOne("DuneDaqMonitoringPlatform.Models.Analyse", "Analyse")
+                        .WithMany("DataDisplayAnalyses")
+                        .HasForeignKey("AnalyseId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("DuneDaqMonitoringPlatform.Models.DataDisplay", "DataDisplay")
+                        .WithMany("DataDisplayAnalyses")
+                        .HasForeignKey("DataDisplayId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

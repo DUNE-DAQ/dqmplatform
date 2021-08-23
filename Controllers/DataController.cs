@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace DuneDaqMonitoringPlatform.Controllers
 {
-    [Authorize(Roles = "Administrator, User")]
     public class DataController : Controller
     {
         private readonly MonitoringDbContext _context;
