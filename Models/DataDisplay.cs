@@ -23,7 +23,10 @@ namespace DuneDaqMonitoringPlatform.Models
 
 
         [Display(Name = "Length of the plot in X")]
-        public int PlotLength { get; set; }
+        public int PlotLengthX { get; set; }
+
+        [Display(Name = "Length of the plot in Y")]
+        public int PlotLengthY { get; set; }
 
         [Display(Name = "Name")]
         [Required]

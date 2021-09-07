@@ -12,7 +12,8 @@ namespace DuneDaqMonitoringPlatform.Models
         public string DataId { get; set; }
         public int[][] ChartData { get; set; }
         public string[] ChartLabels { get; set; }
-        public int ChartLength { get; set; }
+        public int ChartLengthX { get; set; }
+        public int ChartLengthY { get; set; }
         public Boolean IsInit { get; set; }
         public string ChartType { get; set; }
     }

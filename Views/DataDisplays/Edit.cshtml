@@ -19,9 +19,15 @@
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="PlotLength" class="control-label"></label>
-                <input asp-for="PlotLength" class="form-control" />
-                <span asp-validation-for="PlotLength" class="text-danger"></span>
+                <label asp-for="PlotLengthX" class="control-label"></label>
+                <input asp-for="PlotLengthX" class="form-control" />
+                <span asp-validation-for="PlotLengthX" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="PlotLengthY" class="control-label"></label>
+                <input asp-for="PlotLengthY" class="form-control" />
+                <span asp-validation-for="PlotLengthY" class="text-danger"></span>
             </div>
 
             <div class="form-group">
@@ -40,26 +46,26 @@
                 <label class="control-label">Data : </label>
             </div>
 
-                <div class="form-group">
-                    <div class="col-md-offset-2 col-md-10">
-                        <select id="multiSelector" name="multiSelector" multiple>
-                            @{
-                                List<DuneDaqMonitoringPlatform.ViewModels.AssignedDataDisplayData> datas = ViewBag.Datas;
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <select id="multiSelector" name="multiSelector" multiple>
+                        @{
+                            List<DuneDaqMonitoringPlatform.ViewModels.AssignedDataDisplayData> datas = ViewBag.Datas;
 
-                                foreach (var data in datas)
-                                {
-                                    @:<option value="@data.DataDisplayDataId" @(Html.Raw(data.Assigned ? "selected=\"selected\"" : ""))> @data.DisplayName </option>
-                                }
+                            foreach (var data in datas)
+                            {
+                                @:<option value="@data.DataDisplayDataId" @(Html.Raw(data.Assigned ? "selected=\"selected\"" : ""))> @data.DisplayName </option>
                             }
-                        </select>
-                            
-                    </div>
-                </div>
+                        }
+                    </select>
 
-                <div class="form-group">
-                    <input type="submit" value="Save" class="btn btn-primary" />
                 </div>
-            </form>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
     </div>
 </div>
 

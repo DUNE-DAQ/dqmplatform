@@ -94,6 +94,46 @@ connection.on("ReceivePlotUpdate", function (plotUpdate) {
         data = getData[0].data;
     }
 
+    //if the plot has a length in Y, then piles up data (useful for heatmaps)
+    /*if (plotUpdate.chartLengthY != null && plotUpdate.chartLengthY != 0) {
+
+        for (var j = 0; j < plotUpdate.chartData.length; j++) {
+            var index = index = data.length;
+
+            data.push({
+                x: [],
+                y: [],
+                z: [],
+                traceId: plotUpdate.dataId + "_" + index,
+            });
+            //dataList.push({ id: plotUpdate.chartName, data: data });
+        }
+
+        if (data.length > plotUpdate.chartLengthY) {
+            data = data.slice(data.length - plotUpdate.chartLengthY);
+
+        }
+
+    }
+    else {
+        for (var j = 0; j < plotUpdate.chartData.length; j++) {
+            var index = -1;
+
+            if (getData.length != 0) {
+                index = getData[0].data.findIndex(data => data.traceId === plotUpdate.dataId + "_" + j);
+            }
+
+            if (index == -1)
+                data.push({
+                    x: [],
+                    y: [],
+                    z: [],
+                    traceId: plotUpdate.dataId + "_" + j,
+                });
+            //dataList.push({ id: plotUpdate.chartName, data: data });
+        }
+    }*/
+    
     for (var j = 0; j < plotUpdate.chartData.length; j++) {
         var index = -1;
 
@@ -105,11 +145,11 @@ connection.on("ReceivePlotUpdate", function (plotUpdate) {
             data.push({
                 x: [],
                 y: [],
+                z: [],
                 traceId: plotUpdate.dataId + "_" + j,
             });
         //dataList.push({ id: plotUpdate.chartName, data: data });
     }
-    
 
     //If doesn't exist initiate an empty data 
     if (getData.length == 0) {
@@ -164,18 +204,30 @@ connection.on("ReceivePlotUpdate", function (plotUpdate) {
 
 function UpdateZ(plotUpdate, data) {
 
-    var data2dim = [data.length];
+
     for (var j = 0; j < plotUpdate.chartData.length; j++) {
-        data2dim[j] = UpdateAxis(plotUpdate, data[j].y, j)
+        
+        var index = data.findIndex(data => data.traceId == plotUpdate.dataId + "_" + j);
+        data[index].z = UpdateAxisY(plotUpdate, j);
+        data[index].traceId = plotUpdate.dataId;
     }
 
-    var trace = {
-        z: data2dim,
-        type: "heatmap",
-    };
-    data = [trace];
+    //if there are data allready printed, add them to the display
+    
+    if (data.length > plotUpdate.chartLengthY) {
+        data = data.slice(data.length - plotUpdate.chartLengthY);
+    }
 
-    return data;
+
+    var trace = {
+        z: data.map(d => d.z),
+        mode: plotUpdate.chartType,
+        type: "heatmap",
+        traceId: plotUpdate.dataId,
+    };
+    //data = trace;
+
+    return [trace];
 }
 
 function UpdateY(plotUpdate, data, labels) {
@@ -185,7 +237,7 @@ function UpdateY(plotUpdate, data, labels) {
 
         if (labels.length > index) {
             var trace = {
-                y: UpdateAxis(plotUpdate, data[index].y, j),
+                y: UpdateAxisX(plotUpdate, data[index].y, j),
                 mode: plotUpdate.chartType,
                 type: 'scatter',
                 traceId: plotUpdate.dataId + "_" + j,
@@ -194,7 +246,7 @@ function UpdateY(plotUpdate, data, labels) {
         }
         else {
             var trace = {
-                y: UpdateAxis(plotUpdate, data[index].y, j),
+                y: UpdateAxisX(plotUpdate, data[index].y, j),
                 mode: plotUpdate.chartType,
                 type: 'scatter',
                 traceId: plotUpdate.dataId + "_" + j,
@@ -215,7 +267,7 @@ function UpdateX(plotUpdate, data, labels) {
         
         if (labels.length > index) {
             var trace = {
-                x: UpdateAxis(plotUpdate, data[index].x, j),
+                x: UpdateAxisX(plotUpdate, data[index].x, j),
                 type: plotUpdate.chartType,
                 traceId: plotUpdate.dataId + "_" + j,
                 name: labels[index],
@@ -223,7 +275,7 @@ function UpdateX(plotUpdate, data, labels) {
         }
         else {
             var trace = {
-                x: UpdateAxis(plotUpdate, data[index].x, j),
+                x: UpdateAxisX(plotUpdate, data[index].x, j),
                 type: plotUpdate.chartType,
                 traceId: plotUpdate.dataId + "_" + j,
             };
@@ -234,7 +286,7 @@ function UpdateX(plotUpdate, data, labels) {
     return data;
 }
 
-function UpdateAxis(plotUpdate, axisCurrent, index) {
+function UpdateAxisX(plotUpdate, axisCurrent, index) {
     //If this is not the graph initiation add the data at the end
     if (!plotUpdate.isInit) {
         //pushes new data and remove old ones if the plot's length is higher than requested
@@ -251,9 +303,19 @@ function UpdateAxis(plotUpdate, axisCurrent, index) {
     }
 
     //Remove the excess from the plot
-    if (axisCurrent.length > plotUpdate.chartLength) {
-        axisCurrent = axisCurrent.slice(axisCurrent.length - plotUpdate.chartLength);
+    if (axisCurrent.length > plotUpdate.chartLengthX) {
+        axisCurrent = axisCurrent.slice(axisCurrent.length - plotUpdate.chartLengthX);
     }    
 
     return axisCurrent;
+}
+
+function UpdateAxisY(plotUpdate, index) {
+
+    //Remove the excess from the plot
+    if (plotUpdate.chartData[index].length > plotUpdate.chartLengthX) {
+        plotUpdate.chartData[index] = plotUpdate.chartData[index].slice(plotUpdate.chartData[index].length - plotUpdate.chartLengthX);
+    }
+
+    return plotUpdate.chartData[index];
 }

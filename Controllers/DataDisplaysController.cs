@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore.Internal;
 
 namespace DuneDaqMonitoringPlatform.Controllers
 {
+    [Authorize(Roles = "Administrator, User")]
     public class DataDisplaysController : Controller
     {
         private readonly MonitoringDbContext _context;
@@ -67,7 +68,7 @@ namespace DuneDaqMonitoringPlatform.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,PlotLength,Name")] DataDisplay dataDisplay, string[] multiSelector, Guid dataId, Guid dataTypeId, Guid samplingProfileId, Guid analyseId)
+        public async Task<IActionResult> Create([Bind("Id,PlotLengthX,PlotLengthY,Name")] DataDisplay dataDisplay, string[] multiSelector, Guid dataId, Guid dataTypeId, Guid samplingProfileId, Guid analyseId)
         {
             
             dataDisplay.DataType = _context.DataType.Where(d => d.Id == dataTypeId).FirstOrDefault();
