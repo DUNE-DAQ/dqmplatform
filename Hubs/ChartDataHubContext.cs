@@ -45,8 +45,12 @@ namespace DuneDaqMonitoringPlatform.Hubs
 
             ChartData chartData = (ChartData)sender;
 
-            int fileSerieLength = 0;
+            int fileSerieLengthX = 0;
+            int fileSerieLengthY = 0;
             int pathNumber = 0;
+            bool lengthReachedX = false;
+            bool lengthReachedY = false;
+
             //loops until breaked or all paths displayed allows to search files until the right plot length is obtained
             foreach (string path in chartData.Paths)
             {
@@ -83,18 +87,25 @@ namespace DuneDaqMonitoringPlatform.Hubs
                                 break;
                         }
 
-                        ChartUpdate chartUpdate = new ChartUpdate { ChartName = "chartPlaceholder" + chartData.DataDisplay.Id, DataId = chartData.dataId.ToString(), ChartLabels = labelsArray.ToArray() , ChartType = chartData.DataDisplay.DataType.PlottingType, IsInit = chartData.IsInit, DataDisplayName = chartData.DataDisplay.Name, ChartLength = chartData.DataDisplay.PlotLength, ChartData = dataArray.ToArray() };
+                        ChartUpdate chartUpdate = new ChartUpdate { ChartName = "chartPlaceholder" + chartData.DataDisplay.Id, DataId = chartData.dataId.ToString(), ChartLabels = labelsArray.ToArray() , ChartType = chartData.DataDisplay.DataType.PlottingType, IsInit = chartData.IsInit, DataDisplayName = chartData.DataDisplay.Name, ChartLengthX = chartData.DataDisplay.PlotLengthX, ChartLengthY = chartData.DataDisplay.PlotLengthY, ChartData = dataArray.ToArray() };
 
                         Console.WriteLine("Finish reading data, \t round: " + PerformenceTimer.TimerVariable.executionRound.ToString() + " Time elapsed (ms): " + ((DateTime.Now.Ticks - PerformenceTimer.TimerVariable.executionTime) / 10000).ToString());
 
-                     
                         DataSender(chartUpdate, "ReceivePlotUpdate", chartData.SubscribedClients);
                      
+                        //Check if the data length in X requested has been reached
+                        if (fileSerieLengthX <= chartData.DataDisplay.PlotLengthX && chartData.DataDisplay.PlotLengthX != 0)
+                        {
+                            fileSerieLengthX += dataArray[0].Count();
+                        }
+                        else { lengthReachedX = true; }
+                        if (fileSerieLengthY <= chartData.DataDisplay.PlotLengthY && chartData.DataDisplay.PlotLengthY != 0)
+                        {
+                            fileSerieLengthY += dataArray.Count();
+                        }
+                        else { lengthReachedY = true; }
 
-
-                        //Check if the data length requested has been reached
-                        fileSerieLength += dataArray[0].Count();
-                        if (fileSerieLength >= chartData.DataDisplay.PlotLength) { break; }
+                        if (lengthReachedX && lengthReachedY) { break; }
                     }
                     catch (Exception exception)
                     {

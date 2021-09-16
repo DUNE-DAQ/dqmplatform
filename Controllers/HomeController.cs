@@ -31,22 +31,22 @@ namespace DuneDaqMonitoringPlatform.Controllers
     {
 
         private readonly IHubContext<ChartHub> _hubContext;
-        private readonly MonitoringDbContext _context;
+
         public static System.Timers.Timer myTimer = new System.Timers.Timer();
 
 
 
 
-        public HomeController(IHubContext<ChartHub> hubContext, MonitoringDbContext context)
+        public HomeController(IHubContext<ChartHub> hubContext)
         {
             _hubContext = hubContext;
-            _context = context;
+
         }
 
 
         public IActionResult Index()
         {
-            ViewBag.InitDb = _context.Analyse.FirstOrDefault();
+   
             return View();
         }      
 
