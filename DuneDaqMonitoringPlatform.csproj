@@ -2,7 +2,6 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <UserSecretsId>aspnet-DuneDaqMonitoringPlatform-D01F20A7-82D7-4821-A8E9-EAAD50FB525F</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
