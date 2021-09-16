@@ -47,9 +47,9 @@ namespace DuneDaqMonitoringPlatform
             services.AddSignalR();
 
             services.AddHostedService<KafkaConsumer>();
-            /*
+
             var manager = new ConfigurationManager<OpenIdConnectConfiguration>(Configuration.GetValue<string>("LogginService:WellKnown"), new OpenIdConnectConfigurationRetriever());
-            
+
             services.AddAuthentication()
                 .AddOpenIdConnect("CERN", c => {
                     c.ConfigurationManager = manager;
@@ -58,7 +58,7 @@ namespace DuneDaqMonitoringPlatform
                     c.Authority = "https://auth.cern.ch";
                     c.ResponseType = "code";
                 });
-            */
+
 
             services.AddIdentity<IdentityUser, IdentityRole>()
                 .AddEntityFrameworkStores<UserDbContext>()
