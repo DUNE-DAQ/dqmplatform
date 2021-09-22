@@ -37,25 +37,23 @@ There are two distinct data structure, the outputs produced by a functional elem
 
 #### Creation service : 
 dataSourceName + ";" + dataName + ";" + run + ";" + subRun + ";" + event + ";" + timeStamp + ";" + metadata + ";" + content
-    * The name of the system producing the : datadataSourceName 
-    * The name of the sub-system producing the : datadataName 
-    * The run number : run 
-    * The sub-run number : subRun
-    * The event id : event
-    * The time of the event : timeStamp
-    * Free-form metadata : metadata
-    * The physics data produced : content
+ - The name of the system producing the : datadataSourceName 
+ - The name of the sub-system producing the : datadataName 
+ - The run number : run 
+ - The sub-run number : subRun
+ - The event id : event
+ - The time of the event : timeStamp
+  - Free-form metadata : metadata
+ - The physics data produced : content
 Those messages uses the semicolon ";" separator.
 
 #### Processing service : 
 dataId + "," + recordId + "," + dataPath + "," + storageType
 
-    * Identifier of the sub-system producing the data (allows for a platform to check if they are subscribed to it) : dataId 
-    * Record id in the database : recordId 
-    * Path to access the data without querying 
-    the database : dataPath 
-    * Data encoding : storageType
-Those messages uses the period "," separator.
+ - Identifier of the sub-system producing the data (allows for a platform to check if they are subscribed to it) : dataId 
+ - Record id in the database : recordId 
+ - Path to access the data without querying the database : dataPath 
+ - Data encoding : storageType Those messages uses the period "," separator.
 
 ## Display service
 The monitoring platform is the interface allowing to display the DQM module outputs, analysis results and to set analysis parameters.
@@ -68,31 +66,31 @@ The platform's architecture main constraint is its speed. It has to be able disp
 The display service consist of a web platform, using the MVC architecture. The platform is deployed on CERN's openshift OKD4 platform. It runs on an Apache server using .NET Core SDK 3.1.107 and .NET Core Runtime 3.1.7.
 
 The framework choice key factor were mainly:
-    * Open source and cross-platform
-    * Performance
-    * Native data querying implementation
-    * WebSockets implementation
-    * Asynchronous programming pattern implementation
-    * Presence in the industry
-    * Object–relational mapping framework integration in the infrastructure 
+ - Open source and cross-platform
+ - Performance
+ - Native data querying implementation
+ - WebSockets implementation
+ - Asynchronous programming pattern implementation
+ - Presence in the industry
+ - Object–relational mapping framework integration in the infrastructure 
 
 The following packages are used in the back-end:
-    * Confluent.Kafka                                           1.6.3\footnoteConfluent developped/maintained .NET library for kafka brokers, https://docs.confluent.io/clients-confluent-kafka-dotnet/current/overview.html 
-    * Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore      3.1.13\footnoteLightweight Entity Framework data access, open source and cross-platform version, https://docs.microsoft.com/en-us/ef/core/
-    * Microsoft.AspNetCore.Identity.EntityFrameworkCore         3.1.15\footnoteAPI based entity builder for authentication, https://docs.microsoft.com/en-us/aspnet/core/security/authentication/identity
-    * Microsoft.AspNetCore.Identity.UI                          3.1.15\footnoteAPI based user interface for authentication, https://docs.microsoft.com/en-us/aspnet/core/security/authentication/identity 
-    * Npgsql.EntityFrameworkCore.PostgreSQL                     3.1.11\footnoteNpgsql's Entity Framework Core provider, https://www.npgsql.org/efcore/
-    * Microsoft.AspNetCore.Authentication.OpenIdConnect         3.1.13\footnoteTypes library enabling OpenIdConnect based authentication support, https://docs.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.authentication.openidconnect
-    * Microsoft.AspNetCore.Authentication.JwtBearer             3.1.16\footnoteMiddleware enabling receiving OpenID Connect bearer tokens, https://www.nuget.org/packages/Microsoft.AspNetCore.Authentication.JwtBearer
-    * Microsoft.AspNetCore.Authentication.Cookies               2.2.0\footnoteAuthentication provider outside identity (for OpenIdConnect), https://docs.microsoft.com/en-us/aspnet/core/security/authentication/cookie 
-    * Microsoft.EntityFrameworkCore.Tools                       3.1.15\footnoteEnables database migration control in PowerShell, https://www.nuget.org/packages/Microsoft.EntityFrameworkCore.Tools 
+ - Confluent.Kafka                                           1.6.3\footnoteConfluent developped/maintained .NET library for kafka brokers, https://docs.confluent.io/clients-confluent-kafka-dotnet/current/overview.html 
+ - Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore      3.1.13\footnoteLightweight Entity Framework data access, open source and cross-platform version, https://docs.microsoft.com/en-us/ef/core/
+ - Microsoft.AspNetCore.Identity.EntityFrameworkCore         3.1.15\footnoteAPI based entity builder for authentication, https://docs.microsoft.com/en-us/aspnet/core/security/authentication/identity
+ - Microsoft.AspNetCore.Identity.UI                          3.1.15\footnoteAPI based user interface for authentication, https://docs.microsoft.com/en-us/aspnet/core/security/authentication/identity 
+ - Npgsql.EntityFrameworkCore.PostgreSQL                     3.1.11\footnoteNpgsql's Entity Framework Core provider, https://www.npgsql.org/efcore/
+ - Microsoft.AspNetCore.Authentication.OpenIdConnect         3.1.13\footnoteTypes library enabling OpenIdConnect based authentication support, https://docs.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.authentication.openidconnect
+ - Microsoft.AspNetCore.Authentication.JwtBearer             3.1.16\footnoteMiddleware enabling receiving OpenID Connect bearer tokens, https://www.nuget.org/packages/Microsoft.AspNetCore.Authentication.JwtBearer
+ - Microsoft.AspNetCore.Authentication.Cookies               2.2.0\footnoteAuthentication provider outside identity (for OpenIdConnect), https://docs.microsoft.com/en-us/aspnet/core/security/authentication/cookie 
+ - Microsoft.EntityFrameworkCore.Tools                       3.1.15\footnoteEnables database migration control in PowerShell, https://www.nuget.org/packages/Microsoft.EntityFrameworkCore.Tools 
 
 The following packages are used in the front-end:
-    * plotly.js                                                 1.58.4\footnoteDeclarative charting library, https://plotly.com/javascript/
-    * vanillaSelectBox                                          0.59\footnoteJs multi-select user interface for drop-downs, https://github.com/PhilippeMarcMeyer/vanillaSelectBox
-    * Bootstrap                                                 4.3.1\footnoteResponsive CSS framework, https://getbootstrap.com/docs/4.0/utilities/flex/ 
-    * jQuery                                                    3.5.1\footnoteJavaScript library, https://jquery.com/ 
-    * signalR                                                   3.1.16\footnoteOpen-source library for high frequency server-client update, https://docs.microsoft.com/en-us/aspnet/core/signalr/
+ - plotly.js                                                 1.58.4\footnoteDeclarative charting library, https://plotly.com/javascript/
+ - vanillaSelectBox                                          0.59\footnoteJs multi-select user interface for drop-downs, https://github.com/PhilippeMarcMeyer/vanillaSelectBox
+ - Bootstrap                                                 4.3.1\footnoteResponsive CSS framework, https://getbootstrap.com/docs/4.0/utilities/flex/ 
+ - jQuery                                                    3.5.1\footnoteJavaScript library, https://jquery.com/ 
+ - signalR                                                   3.1.16\footnoteOpen-source library for high frequency server-client update, https://docs.microsoft.com/en-us/aspnet/core/signalr/
 
 ### Program architecture
 As mentioned earlier, the platform is based on the MVC architecture. The following section will detail the platform's main functionalities.
@@ -193,9 +191,9 @@ The connection parameters for the monitoring database.
 Kafka broker configuration, including the connection certificates necessary. The certificates are all stored in the folder of the same name. 
 
 In the certificates needed are:
-    * The certification authority
-    * The SSL certificate
-    * The SSL key
+ - The certification authority
+ - The SSL certificate
+ - The SSL key
 
 From CERN, a Grid p12 certificate can be obtained from the CERN certificates service \footnotehttps://ca.cern.ch/. From there, it is possible to generate the certificates using the scripts stored in CERN's kafka service github \footnotehttps://gitlab.cern.ch/db/kafka-clients-example/-/tree/master/tools. On a side-note, never store certificates in wwwroot folder of the applciation.
 
@@ -206,19 +204,19 @@ The list of Kafka topics consumed by the platform. In the current configuration 
 #### startup
 ##### ConfigureServices
  Services are reusable components providing functionalities, they are registered in the method and consumed by dependency injection or through ApplicationServices. The main modifications from the regular \footnotehttps://docs.microsoft.com/en-us/aspnet/core/fundamentals/startupin this methods are:
-    * Adding the DbContexts, AddEntityFrameworkNpgsql
-    * Adding the kafka service, AddHostedService
-    * Adding the CERN OpenId configuration,  ConfigurationManager
-    * Adding external authentication providers, AddAuthentication
-    * Adding Identity user management, AddIdentity
-    * Force secure connection, AddHsts
+ - Adding the DbContexts, AddEntityFrameworkNpgsql
+ - Adding the kafka service, AddHostedService
+ - Adding the CERN OpenId configuration,  ConfigurationManager
+ - Adding external authentication providers, AddAuthentication
+ - Adding Identity user management, AddIdentity
+ - Force secure connection, AddHsts
 
 The only external authentication provider implemented as of now is CERN OpenID, the necessary configuration elements are:
-    * The Configuration Manager
-    * The OpenId Client Id
-    * The OpenId Client Secret
-    * The Authority
-    * The Response Type
+ - The Configuration Manager
+ - The OpenId Client Id
+ - The OpenId Client Secret
+ - The Authority
+ - The Response Type
                 
 
 ##### Configure
@@ -248,9 +246,9 @@ The message handlers are a series of processing micro-services transforming the 
 
 The monitoring database is central to the monitoring platform. It has three functionalities as described in the following paragraphs. The purpose of this database is to store all data, the actions done on those data and how to display it.
 
-  * Organizing the data storage
-  * Manage the data display
-  * Save the analysis parameters
+ - Organizing the data storage
+ - Manage the data display
+ - Save the analysis parameters
 
 #### Organizing the data storage (Data)
 This part of the database organizes the DQM data. The DQM data can either come straight from the DQM module or be the result of some processing.
@@ -273,9 +271,9 @@ A data display is a number of data or analysis plotted according to parameters. 
 ##### DataType
 The data type describe the way the data are supposed to be plotted. the plots implemented currently are:
 
-  * Histograms
-  * Scatter (with bars, points, or both)
-  * Heatmaps
+ - Histograms
+ - Scatter (with bars, points, or both)
+ - Heatmaps
 
 ##### SamplingProfile
 If a display has specific rules, such as a sampling in the case of long plots of low variance, the rule is created in this table.
