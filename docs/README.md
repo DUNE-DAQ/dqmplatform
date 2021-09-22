@@ -24,10 +24,10 @@ The access management to the server is made through the dune-dqm-broker e-group.
 The following topics are used in the broker. It is important to subscribe to the relevant one for producing or consuming. Failing to do so could corrupt the functioning of a given script. For the creation of new topic, forward a request to the documentation creators.
 
 Available topics are:
-    * First DQM module outputs : dunedqm-incommingchannel1
-    * Second DQM module outputs (not in use) : dunedqm-incommingchannel2
-    * Topic consumed by the web platform, every sent data will be automatically sent there : dunedqm-platforminputs
-    * Data post processing channel : dunedqm-processedchannel1
+ - First DQM module outputs : dunedqm-incommingchannel1
+ - Second DQM module outputs (not in use) : dunedqm-incommingchannel2
+ - Topic consumed by the web platform, every sent data will be automatically sent there : dunedqm-platforminputs
+ - Data post processing channel : dunedqm-processedchannel1
 
 #### Secondary Apache Kafka cluster
 A spare kafka instance is available, this one with no authentication needed at 188.185.122.48. All topics are replicated. The platform is hosted on a CERN openstack docker.
