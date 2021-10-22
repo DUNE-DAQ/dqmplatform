@@ -23,22 +23,16 @@
             @Html.DisplayFor(model => model.Name)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.PlotLengthX)
+            @Html.DisplayNameFor(model => model.PlotLength)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.PlotLengthX)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.PlotLengthY)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.PlotLengthY)
+            @Html.DisplayFor(model => model.PlotLength)
         </dd>
         <dt class="col-sm-2">
             Data
         </dt>
         <dd class="col-sm-10">
-
+            
         </dd>
         <dt class="col-sm-2">
             Sampling profile
@@ -48,7 +42,7 @@
         </dd>
         <dt class="col-sm-2">
             Data list
-        </dt>
+        </dt>            
         @{
             List<DuneDaqMonitoringPlatform.ViewModels.AssignedDataDisplayData> datas = ViewBag.Datas;
 

@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading;
 using System.Globalization;
+using System.Text.RegularExpressions;
 
 namespace DuneDaqMonitoringPlatform.Hubs
 {
@@ -76,7 +77,7 @@ namespace DuneDaqMonitoringPlatform.Hubs
 
 
             //Get a list of ordered timestamp from the moment selected by the user
-            List<DateTime> chartDatasOrderedTimes = dataPathsList.Select(dpl => dpl.DataPaths).SelectMany(l => l).Select(dp => Convert.ToDateTime(dp.WriteTime)).Where(dp => dp >= startTime).OrderBy(wt => wt).Distinct().ToList();
+            List<DateTime> chartDatasOrderedTimes = dataPathsList.Select(dpl => dpl.DataPaths).SelectMany(l => l).Select(dp => UnixToDatetime(dp.WriteTime)).Where(dp => dp >= startTime).OrderBy(wt => wt).Distinct().ToList();
 
             
             //Send the datapath in order to the display
@@ -94,10 +95,10 @@ namespace DuneDaqMonitoringPlatform.Hubs
 
                     foreach (List<DataPath> dataPaths in dataPathsList.Where(dpl => dpl.DisplayGuid == dataDisplayGuid).Select(dpl => dpl.DataPaths))
                     {
-                        if(dataPaths.Select(dp => Convert.ToDateTime(dp.WriteTime)).Contains(chartDatasOrderedTime))
+                        if(dataPaths.Select(dp => UnixToDatetime(dp.WriteTime)).Contains(chartDatasOrderedTime))
                         {
-                            List<string> paths = dataPaths.Where(dp => roundToSecond(dp.WriteTime) <= chartDatasOrderedTime).Select(dp => dp.Path).ToList();
-                            List<string> storages = dataPaths.Where(dp => roundToSecond(dp.WriteTime) <= chartDatasOrderedTime).Select(dp => dp.Storage).ToList();
+                            List<string> paths = dataPaths.Where(dp => UnixToDatetime(dp.WriteTime) <= chartDatasOrderedTime).Select(dp => dp.Path).ToList();
+                            List<string> storages = dataPaths.Where(dp => UnixToDatetime(dp.WriteTime) <= chartDatasOrderedTime).Select(dp => dp.Storage).ToList();
 
                             DataDisplay dataDisplay = monitoringDbContext.DataDisplay.Where(dd => dd.Id == dataDisplayGuid).Include(dd => dd.DataType).FirstOrDefault();
 
@@ -173,7 +174,7 @@ namespace DuneDaqMonitoringPlatform.Hubs
         //Rounds down the time to second son compraison doesn't get wronged by miliseconds
         private DateTime roundToSecond(string time)
         {
-            DateTime dateTime = Convert.ToDateTime(time);
+            DateTime dateTime = UnixToDatetime(time);
             dateTime = new DateTime(
                 dateTime.Ticks - (dateTime.Ticks % TimeSpan.TicksPerSecond),
                 dateTime.Kind
@@ -197,5 +198,13 @@ namespace DuneDaqMonitoringPlatform.Hubs
         //Contains a list of connected users with all their subscribed data displays
         public static List<ConnectedClient> ConnectedClients = new List<ConnectedClient>();
 
+
+        public DateTime UnixToDatetime(string time)
+        {
+            //Convert the microsecond to second
+            long timeLong = long.Parse(Regex.Replace(time, "[^0-9]", "").Substring(0, 10));
+
+            return DateTimeOffset.FromUnixTimeSeconds(timeLong).DateTime;
+        }
     }
 }

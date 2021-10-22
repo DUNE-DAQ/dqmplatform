@@ -12,19 +12,26 @@
 
 <div class="row">
     <div class="col-4">
-        <a class="nav-link text-dark" asp-area="" asp-controller="DataDisplays" asp-action="Index" ><b>Data displays</b></a>
-        <p class="text-info">Data displays are a way of representing selected data. It allows you to choose a certain data and decide parameters as its display length or type.</p>
-    </div>   
+        <a class="nav-link text-dark" asp-area="" asp-controller="DataDisplays" asp-action="Index"><b>Data displays</b></a>
+        <p class="text-info">Data displays are a way of representing selected data. It allows you to choose a certain data and decide parameters as its display length or type. You need to be regaistered as an user to do this action.</p>
+    </div>
     <div class="col-4">
         <a class="nav-link text-dark" asp-area="" asp-controller="Pannels" asp-action="Create"><b>Empty pannel</b></a>
-        <p class="text-info">Pannels are a collection of data displays (formated data), this page allows you to select data displays and get their updates in real time. You don't want to start from scratch every time? Save your pannel and access it any time.</p>
-    </div>   
+        <p class="text-info">Pannels are a collection of data displays (formated data), this page allows you to select data displays and get their updates in real time. You don't want to start from scratch every time? Save your pannel and access it any time. You need to be regaistered as an user to do this action.</p>
+    </div>
     <div class="col-4">
         <a class="nav-link text-dark" asp-area="" asp-controller="Pannels" asp-action="Index"><b>Pannels</b></a>
-        <p class="text-info">Have you created a pannel already, or you want to access any existign one? All pannels are listed here, find the one you need and choose "Details". Uf you have been given the access rights, you may also edit existing pannels, to add and remove data displays.</p>
+        <p class="text-info">Have you created a pannel already, or you want to access any existign one? All pannels are listed here, find the one you need and choose "Details". Uf you have been given the access rights, you may also edit existing pannels, to add and remove data displays. Anyone with an account can view pannels. </p>
+    </div>
+    <div class="col-4">
+        <a class="nav-link text-dark" asp-area="" asp-controller="DataSources" asp-action="Index"><b>Standard Pannels</b></a>
+        <p class="text-info">Want a quick start with your pannels? When you produce data from a new source, you can generate a default pannel with standard data displays. You need to be regaistered as an user to do this action. You need to be regaistered as an user to do this action.</p>
     </div>
 </div>
 
+<div class="text-center">
+    <p class="text-info">Access denied? Ask an administrator you know or yann.donon@cern.ch to give you the appropriate access rights.</p>
+</div>
 
 <script src="~/lib/signalr/dist/browser/signalr.js"></script>
 <script src="~/js/chart.js"></script>

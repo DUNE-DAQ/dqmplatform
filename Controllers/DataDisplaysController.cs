@@ -68,7 +68,7 @@ namespace DuneDaqMonitoringPlatform.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,PlotLengthX,PlotLengthY,Name")] DataDisplay dataDisplay, string[] multiSelector, Guid dataId, Guid dataTypeId, Guid samplingProfileId, Guid analyseId)
+        public async Task<IActionResult> Create([Bind("Id,PlotLength,Name")] DataDisplay dataDisplay, string[] multiSelector, Guid dataId, Guid dataTypeId, Guid samplingProfileId, Guid analyseId)
         {
             
             dataDisplay.DataType = _context.DataType.Where(d => d.Id == dataTypeId).FirstOrDefault();
@@ -89,7 +89,7 @@ namespace DuneDaqMonitoringPlatform.Controllers
         
         private void PopulateDataDisplayData(DataDisplay dataDisplay)
         {
-            List<Models.Data> datas = _context.Data.Include(d => d.DataDisplayDatas).Where(dd => dd.Name != "").ToList();
+            List<Models.Data> datas = _context.Data.Include(d => d.DataDisplayDatas).Include(d => d.DataSource).Where(dd => dd.Name != "").ToList();
 
             var viewModel = new List<AssignedDataDisplayData>();
             foreach (var data in datas)
@@ -100,6 +100,7 @@ namespace DuneDaqMonitoringPlatform.Controllers
                     {
                         DataDisplayDataId = data.Id,
                         DisplayName = data.Name,
+                        DataSourceName = data.DataSource.Source,
                         Assigned = (dataDisplay.DataDisplayDatas.Intersect(data.DataDisplayDatas).Count() != 0)
                     });
                 }
@@ -108,6 +109,7 @@ namespace DuneDaqMonitoringPlatform.Controllers
                     viewModel.Add(new AssignedDataDisplayData
                     {
                         DataDisplayDataId = data.Id,
+                        DataSourceName = data.DataSource.Source,
                         DisplayName = data.Name
                     });
                 }

@@ -45,12 +45,8 @@ namespace DuneDaqMonitoringPlatform.Hubs
 
             ChartData chartData = (ChartData)sender;
 
-            int fileSerieLengthX = 0;
-            int fileSerieLengthY = 0;
+            int fileSerieLength = 0;
             int pathNumber = 0;
-            bool lengthReachedX = false;
-            bool lengthReachedY = false;
-
             //loops until breaked or all paths displayed allows to search files until the right plot length is obtained
             foreach (string path in chartData.Paths)
             {
@@ -69,7 +65,10 @@ namespace DuneDaqMonitoringPlatform.Hubs
                         Console.WriteLine("Start Reading data, \t round: " + PerformenceTimer.TimerVariable.executionRound.ToString() + " Time elapsed (ms): " + ((DateTime.Now.Ticks - PerformenceTimer.TimerVariable.executionTime) / 10000).ToString());
 
                         List<int[]> dataArray = new List<int[]>();
-                        List<string> labelsArray = new List<string>();
+                        List<string> chartLabelsArray = new List<string>();
+                        List<string> xLabelsArray = new List<string>();
+                        List<string> yLabelsArray = new List<string>();
+                        List<string> seriesLabelsArray = new List<string>();
                         DataBSON dataBSON = new DataBSON();
                         //Chooses the reading function according to the storage type
                         switch (chartData.dataStorages[pathNumber])
@@ -80,32 +79,34 @@ namespace DuneDaqMonitoringPlatform.Hubs
                             case "BSON":
                                 dataBSON = await DataBSONReader(pathConverted);
                                 dataArray = dataBSON.Datas;
-                                labelsArray = dataBSON.Labels;
+                                chartLabelsArray = dataBSON.ChartLabels;
+                                seriesLabelsArray = dataBSON.SeriesLabels;
+                                xLabelsArray = dataBSON.LabelXs;
+                                yLabelsArray = dataBSON.LabelYs;
                                 break;
                             default:
                                 dataArray = await DataStructuredFileReader(pathConverted);
                                 break;
                         }
 
-                        ChartUpdate chartUpdate = new ChartUpdate { ChartName = "chartPlaceholder" + chartData.DataDisplay.Id, DataId = chartData.dataId.ToString(), ChartLabels = labelsArray.ToArray() , ChartType = chartData.DataDisplay.DataType.PlottingType, IsInit = chartData.IsInit, DataDisplayName = chartData.DataDisplay.Name, ChartLengthX = chartData.DataDisplay.PlotLengthX, ChartLengthY = chartData.DataDisplay.PlotLengthY, ChartData = dataArray.ToArray() };
-
-                        Console.WriteLine("Finish reading data, \t round: " + PerformenceTimer.TimerVariable.executionRound.ToString() + " Time elapsed (ms): " + ((DateTime.Now.Ticks - PerformenceTimer.TimerVariable.executionTime) / 10000).ToString());
-
-                        DataSender(chartUpdate, "ReceivePlotUpdate", chartData.SubscribedClients);
-                     
-                        //Check if the data length in X requested has been reached
-                        if (fileSerieLengthX <= chartData.DataDisplay.PlotLengthX && chartData.DataDisplay.PlotLengthX != 0)
+                        if(dataArray != null && chartLabelsArray != null && seriesLabelsArray != null && xLabelsArray != null && yLabelsArray != null)
                         {
-                            fileSerieLengthX += dataArray[0].Count();
-                        }
-                        else { lengthReachedX = true; }
-                        if (fileSerieLengthY <= chartData.DataDisplay.PlotLengthY && chartData.DataDisplay.PlotLengthY != 0)
-                        {
-                            fileSerieLengthY += dataArray.Count();
-                        }
-                        else { lengthReachedY = true; }
+                            ChartUpdate chartUpdate = new ChartUpdate { ChartName = "chartPlaceholder" + chartData.DataDisplay.Id, DataId = chartData.dataId.ToString(), YLabels = yLabelsArray.ToArray(), XLabels = xLabelsArray.ToArray(), SeriesLabels = seriesLabelsArray.ToArray(), ChartLabels = chartLabelsArray.ToArray(), ChartType = chartData.DataDisplay.DataType.PlottingType, IsInit = chartData.IsInit, DataDisplayName = chartData.DataDisplay.Name, ChartLength = chartData.DataDisplay.PlotLength, ChartData = dataArray.ToArray() };
 
-                        if (lengthReachedX && lengthReachedY) { break; }
+                            Console.WriteLine("Finish reading data, \t round: " + PerformenceTimer.TimerVariable.executionRound.ToString() + " Time elapsed (ms): " + ((DateTime.Now.Ticks - PerformenceTimer.TimerVariable.executionTime) / 10000).ToString());
+
+
+                            DataSender(chartUpdate, "ReceivePlotUpdate", chartData.SubscribedClients);
+
+
+
+                            //Check if the data length requested has been reached
+                            fileSerieLength += dataArray[0].Count();
+                            //if 0 set as size, takes only one file at the time
+                            if (chartData.DataDisplay.PlotLength == 0) { break; }
+                            //Else displays util size reached
+                            else if (fileSerieLength >= chartData.DataDisplay.PlotLength) { break; }
+                        }
                     }
                     catch (Exception exception)
                     {
@@ -138,14 +139,21 @@ namespace DuneDaqMonitoringPlatform.Hubs
         {
             return Task.Run(() =>
             {
-                DataBSON dataBSON;
-
-                byte[] bsonData = System.IO.File.ReadAllBytes(pathConverted);
-                using (BsonReader reader = new BsonReader(new MemoryStream(bsonData)))
+                DataBSON dataBSON = new DataBSON();
+                try
                 {
-                    JsonSerializer serializer = new JsonSerializer();
 
-                    dataBSON = serializer.Deserialize<DataBSON>(reader);
+                    byte[] bsonData = System.IO.File.ReadAllBytes(pathConverted);
+                    using (BsonReader reader = new BsonReader(new MemoryStream(bsonData)))
+                    {
+                        JsonSerializer serializer = new JsonSerializer();
+
+                        dataBSON = serializer.Deserialize<DataBSON>(reader);
+                    }
+                }
+                catch (Exception exception)
+                {
+                    Console.WriteLine(exception.Message.ToString());
                 }
                 return dataBSON;
             });            

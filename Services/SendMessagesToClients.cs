@@ -32,52 +32,65 @@ namespace DuneDaqMonitoringPlatform.Actions
         {
             using(MonitoringDbContext monitoringDbContext = new MonitoringDbContext(configuration))
             { 
-                string[] input = sender.ToString().Split(',');
-                string dataId = input[0];
-
-                //Get all the DataDisplayDatas containing the data input id
-                List<DataDisplayData> correspondingDataDisplayDatas = await monitoringDbContext.DataDisplayData.Include(ddd => ddd.DataDisplay).Include(ddd => ddd.Data).Include(dd => dd.DataDisplay.DataType).Where(ddd => ddd.Data.Id == Guid.Parse(dataId)).ToListAsync();
-                Console.WriteLine("Message incoming 1, \t round: " + PerformenceTimer.TimerVariable.executionRound.ToString() + " Time elapsed (ms): " + ((DateTime.Now.Ticks - PerformenceTimer.TimerVariable.executionTime) / 10000).ToString());
-
-                bool subscriber = false;
-
-                foreach (var correspondingDataDisplayData in correspondingDataDisplayDatas)
+                try
                 {
-                    //List of clients subscribed to the sent data display
-                    List<string> subscribedClients = new List<string>();
-                    //Check if any of the client is subscribed to one of those displays, if subscribed gets the data and send
-                    foreach (var ConnectedClient in ChartHub.ConnectedClients)
+                    string[] input = sender.ToString().Split(',');
+                    string dataId = input[0];
+
+                    //Get all the DataDisplayDatas containing the data input id
+                    //List<DataDisplayData> correspondingDataDisplayDatas21 = await monitoringDbContext.DataDisplayData.Include(ddd => ddd.DataDisplay).Include(ddd => ddd.Data).Include(dd => dd.DataDisplay.DataType).ToListAsync();
+                    List<DataDisplayData> correspondingDataDisplayDatas = await monitoringDbContext.DataDisplayData.Include(ddd => ddd.DataDisplay).Include(ddd => ddd.Data).Include(dd => dd.DataDisplay.DataType).Where(ddd => ddd.Data.Id == Guid.Parse(dataId)).ToListAsync();
+                    Console.WriteLine("Message incoming 1, \t round: " + PerformenceTimer.TimerVariable.executionRound.ToString() + " Time elapsed (ms): " + ((DateTime.Now.Ticks - PerformenceTimer.TimerVariable.executionTime) / 10000).ToString());
+
+                    bool subscriber = false;
+
+                    //Console.WriteLine("Incoming Id : " + dataId);
+
+
+                    foreach (var correspondingDataDisplayData in correspondingDataDisplayDatas)
                     {
-                        foreach (var DataDisplay in ConnectedClient.DataDisplayList)
+                        //List of clients subscribed to the sent data display
+                        List<string> subscribedClients = new List<string>();
+                        //Check if any of the client is subscribed to one of those displays, if subscribed gets the data and send
+                        foreach (var ConnectedClient in ChartHub.ConnectedClients)
                         {
-                            if (DataDisplay == correspondingDataDisplayData.DataDisplay.Id)
+                            foreach (var DataDisplay in ConnectedClient.DataDisplayList)
                             {
-                                subscribedClients.Add(ConnectedClient.IdClient);
-                                break;
+                                if (DataDisplay == correspondingDataDisplayData.DataDisplay.Id)
+                                {
+                                    subscribedClients.Add(ConnectedClient.IdClient);
+                                    break;
+                                }
                             }
+                        }
+
+                        if (subscribedClients.Count() != 0)
+                        {
+                            Console.WriteLine("Sending to subsribers, \t round: " + PerformenceTimer.TimerVariable.executionRound.ToString() + " Time elapsed (ms): " + ((DateTime.Now.Ticks - PerformenceTimer.TimerVariable.executionTime) / 10000).ToString());
+
+                            List<string> paths = new List<string>();
+                            paths.Add((input[2]));
+                            List<string> storages = new List<string>();
+                            storages.Add((input[3]));
+                            //Data Id, .DataDisplay.DataType.PlottingType
+                            chartDataMessenger.ChartDataMessage(new ChartData { Paths = paths, IsInit = false, dataId = correspondingDataDisplayData.Data.Id, DataDisplay = correspondingDataDisplayData.DataDisplay, SubscribedClients = subscribedClients, dataStorages = storages });
+                            subscriber = true;
                         }
                     }
 
-                    if (subscribedClients.Count() != 0)
+                    if (!subscriber)
                     {
-                        Console.WriteLine("Sending to subsribers, \t round: " + PerformenceTimer.TimerVariable.executionRound.ToString() + " Time elapsed (ms): " + ((DateTime.Now.Ticks - PerformenceTimer.TimerVariable.executionTime)/10000).ToString());
-
-                        List<string> paths = new List<string>();
-                        paths.Add((input[2]));
-                        List<string> storages = new List<string>();
-                        storages.Add((input[3]));
-                        //Data Id, .DataDisplay.DataType.PlottingType
-                        chartDataMessenger.ChartDataMessage(new ChartData { Paths = paths, IsInit= false, dataId = correspondingDataDisplayData.Data.Id, DataDisplay = correspondingDataDisplayData.DataDisplay, SubscribedClients = subscribedClients, dataStorages = storages });
-                        subscriber = true;
+                        Console.WriteLine("No subscribers, \t round: " + PerformenceTimer.TimerVariable.executionRound.ToString() + " Time elapsed (ms): " + ((DateTime.Now.Ticks - PerformenceTimer.TimerVariable.executionTime) / 10000).ToString());
+                        Console.WriteLine("");
+                        PerformenceTimer.TimerVariable.executionFinished = true;
                     }
                 }
-
-                if(!subscriber)
+                catch(Exception exception)
                 {
-                    Console.WriteLine("No subscribers, \t round: " + PerformenceTimer.TimerVariable.executionRound.ToString() + " Time elapsed (ms): " + ((DateTime.Now.Ticks - PerformenceTimer.TimerVariable.executionTime) / 10000).ToString());
-                    Console.WriteLine("");
-                    PerformenceTimer.TimerVariable.executionFinished = true;
+                    Console.WriteLine(exception.ToString());
+
                 }
+
             }
         }
     }

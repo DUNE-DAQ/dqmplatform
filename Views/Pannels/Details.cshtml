@@ -4,8 +4,8 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
-
+<h1>Details @Model.Name</h1>
+<h3>Details @Model.Description</h3>
 
 <form asp-action="DetailsStatic" asp-route-id="@Model.Id" method="get" target="_blank">
     <input type="datetime-local" id="startTime" name="startTime" step="1">

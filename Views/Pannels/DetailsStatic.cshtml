@@ -1,10 +1,12 @@
 ﻿@model DuneDaqMonitoringPlatform.Models.Pannel
 
-@{
-    ViewData["Title"] = "DetailsStatic";
-}
+@{ ViewData["Title"] = "DetailsStatic"; }
 
-<h2>You are back to </h2><h2 id="timeDisplay">@ViewBag.Time</h2>
+<h2>You are back to </h2>
+<h2 id="timeDisplay">@ViewBag.Time</h2>
+<h1>Details @Model.Name</h1>
+<h3>Details @Model.Description</h3>
+
 
 <script>var blockUpdates = true; //Doesn't subscribe the page to  updates</script>
 
@@ -19,10 +21,8 @@
     @for (var i = 0; i < ViewBag.DataDisplayIdList.Count; i++)
     {
 
-        <div id="chartPlaceholder@(ViewBag.DataDisplayIdList[i])" class="column"> </div>
-        //Informs the hub about the Data displays requested by the client
-        <script>dataDisplayIdList['@i'] = ('@ViewBag.DataDisplayIdList[i]')</script>
-    }
+<div id="chartPlaceholder@(ViewBag.DataDisplayIdList[i])" class="column"> </div> //Informs the hub about the Data displays requested by the client
+<script>dataDisplayIdList['@i'] = ('@ViewBag.DataDisplayIdList[i]')</script>}
 </div>
 
 <div>
