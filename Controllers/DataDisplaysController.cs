@@ -215,6 +215,7 @@ namespace DuneDaqMonitoringPlatform.Controllers
         // GET: DataDisplays/Delete/5
         public async Task<IActionResult> Delete(Guid? id)
         {
+
             if (id == null)
             {
                 return NotFound();

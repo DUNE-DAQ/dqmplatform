@@ -3,7 +3,7 @@
 var connection = new signalR.HubConnectionBuilder().withUrl("/chartHub").build();
 
 if (typeof (document.getElementById('saveButton')) != 'undefined' && document.getElementById('saveButton') != null) {    // Exists.
-    document.getElementById("saveButton").addEventListener("click", function (event) {
+    document.getElementById("saveButton").addEventListener("click", function () {
 
         var pannelName = document.getElementById("pannelName").value;
 
@@ -11,7 +11,7 @@ if (typeof (document.getElementById('saveButton')) != 'undefined' && document.ge
             connection.invoke("saveView", pannelName).catch(function (err) {
                 return console.error(err.toString());
             });
-            event.preventDefault();
+            //event.preventDefault();
 
             document.getElementById('pannelName').value = "";
         }
@@ -20,7 +20,7 @@ if (typeof (document.getElementById('saveButton')) != 'undefined' && document.ge
 
 if (typeof (document.getElementById('sendButton')) != 'undefined' && document.getElementById('sendButton') != null) {    // Exists.
 
-    document.getElementById("sendButton").addEventListener("click", function (event) {
+    document.getElementById("sendButton").addEventListener("click", function () {
         var dataDisplayId = document.getElementById("dataDisplayId").value;
 
         var element = document.createElement("div");
@@ -31,7 +31,7 @@ if (typeof (document.getElementById('sendButton')) != 'undefined' && document.ge
         connection.invoke("GetDisplayList", dataDisplayId).catch(function (err) {
             return console.error(err.toString());
         });
-        event.preventDefault();
+        //event.preventDefault();
     });
 }
 
@@ -66,7 +66,7 @@ function SendDataDisplayIdDisplayed(dataDisplayId) {
             return console.error(err.toString());
         });
     }
-    event.preventDefault();
+    //event.preventDefault();
 }
 
 connection.on("ReceiveTimeUpdate", function (time, formatedTime) {
@@ -86,6 +86,16 @@ connection.on("ReceivePlotUpdate", function (plotUpdate) {
     //Artificially fill plotUpdate.chartLabels array too simplify display of titles
     while (plotUpdate.chartLabels.length < 3) {
         plotUpdate.chartLabels.push("")
+    }
+
+    //Display the panels informations
+    if (typeof (document.getElementById('runNumber')) != 'undefined' && document.getElementById('runNumber') != null && typeof (document.getElementById('triggerRecord')) != 'undefined' && document.getElementById('triggerRecord') != null) {
+        if (typeof (plotUpdate.runNumber) != 'undefined' && plotUpdate.runNumber != null) {
+            document.getElementById('runNumber').innerHTML = " Run number : " + plotUpdate.runNumber;
+        }
+        if (typeof (plotUpdate.metadata) != 'undefined' && plotUpdate.metadata != null) {
+            document.getElementById('triggerRecord').innerHTML = " Trigger record : " + plotUpdate.metadata;
+        }
     }
 
     //Checks if the array exists
@@ -127,7 +137,10 @@ connection.on("ReceivePlotUpdate", function (plotUpdate) {
     //Update the data in y axis
 
     /*type: 'log',
-    autorange: true*/
+    autorange: true
+    tickvals: [...Array(plotUpdate.chartData[0].length).keys()],
+    ticktext: HideLabels(plotUpdate.xLabels, 20),
+    */
 
     switch (plotUpdate.chartType) {
         case "markers":
@@ -135,21 +148,23 @@ connection.on("ReceivePlotUpdate", function (plotUpdate) {
         case "lines+markers":
             data = UpdateY(plotUpdate, data, plotUpdate.seriesLabels);
             layout = {
-                title: plotUpdate.dataDisplayName,
-
+                title: plotUpdate.dataDisplayName + " updated: " + plotUpdate.chartTime + " UTC",
                 xaxis: {
                     title: {
                         text: plotUpdate.chartLabels[0],
                     },
                     tickvals: [...Array(plotUpdate.chartData[0].length).keys()],
-                    ticktext: HideLabels(plotUpdate.xLabels, 20),
+                    ticktext: plotUpdate.xLabels,
+                    showticklabels: false,
+                    showgrid: false
+
                 },
                 yaxis: {
                     title: {
                         text: plotUpdate.chartLabels[1],
                     },
-                    type: 'log',
-                    autorange: true
+                    type: plotUpdate.chartPlottingType,
+                    showgrid: true,
                 },
             };
             break;
@@ -157,7 +172,7 @@ connection.on("ReceivePlotUpdate", function (plotUpdate) {
             data = UpdateX(plotUpdate, data, plotUpdate.seriesLabels);
             data = UpdateY(plotUpdate, data, plotUpdate.seriesLabels);
             layout = {
-                title: plotUpdate.dataDisplayName,
+                title: plotUpdate.dataDisplayName + " updated: " + plotUpdate.chartTime + " UTC",
 
                 xaxis: {
                     title: {
@@ -176,14 +191,15 @@ connection.on("ReceivePlotUpdate", function (plotUpdate) {
         case "heatmap":
             data = UpdateZ(plotUpdate, data);
             layout = {
-                title: plotUpdate.dataDisplayName,
+                title: plotUpdate.dataDisplayName + " updated: " + plotUpdate.chartTime + " UTC",
 
                 xaxis: {
                     title: {
                         text: plotUpdate.chartLabels[0],
                     },
                     tickvals: [...Array(plotUpdate.chartData[0].length).keys()],
-                    ticktext: HideLabels(plotUpdate.xLabels, 20),
+                    ticktext: plotUpdate.xLabels,
+                    showticklabels: false,
                 },
 
                 yaxis: {
@@ -191,7 +207,8 @@ connection.on("ReceivePlotUpdate", function (plotUpdate) {
                         text: plotUpdate.chartLabels[1],
                     },
                     tickvals: [...Array(plotUpdate.chartData.length).keys()],
-                    ticktext: HideLabels(plotUpdate.yLabels, 10),
+                    ticktext: plotUpdate.yLabels,
+                    showticklabels: false,
                 },
             };
             break;

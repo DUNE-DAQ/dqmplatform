@@ -26,7 +26,7 @@ using System.Threading.Tasks;
 
 namespace DuneDaqMonitoringPlatform.Controllers
 {
-    
+    [Authorize]
     public class HomeController : Controller
     {
 

@@ -12,6 +12,7 @@ using DuneDaqMonitoringPlatform.ViewModels;
 
 namespace DuneDaqMonitoringPlatform.Controllers
 {
+    [Authorize]
     public class PannelsController : Controller
     {
         private readonly MonitoringDbContext _context;
@@ -66,6 +67,7 @@ namespace DuneDaqMonitoringPlatform.Controllers
             return View(pannel);
         }
 
+        [Authorize(Roles = "Administrator, User")]
         // GET: Pannels/Create
         public IActionResult Create()
         {
@@ -79,6 +81,7 @@ namespace DuneDaqMonitoringPlatform.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrator, User")]
         public async Task<IActionResult> Create([Bind("Id,Name,Description")] Pannel pannel)
         {
             if (ModelState.IsValid)
@@ -92,6 +95,7 @@ namespace DuneDaqMonitoringPlatform.Controllers
         }
 
         // GET: Pannels/Edit/5
+        [Authorize(Roles = "Administrator, User")]
         public async Task<IActionResult> Edit(Guid? id)
         {
             if (id == null)
@@ -126,6 +130,7 @@ namespace DuneDaqMonitoringPlatform.Controllers
             ViewBag.DataDisplays = viewModel;
         }
 
+        [Authorize(Roles = "Administrator, User")]
         private void EditAnalysisPannels(Pannel pannel, List<Guid> selectedDataDisplays)
         {
 
@@ -166,6 +171,7 @@ namespace DuneDaqMonitoringPlatform.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrator, User")]
         public async Task<IActionResult> Edit(Guid id, [Bind("Id,Name,Description")] Pannel pannel, string[] multiSelector)
         {
             if (id != pannel.Id)
@@ -222,6 +228,23 @@ namespace DuneDaqMonitoringPlatform.Controllers
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
             var pannel = await _context.Pannel.Include(p => p.AnalysisPannels).Where(p => p.Id == id).FirstOrDefaultAsync();
+            //Remove displays related to this pannel only
+            foreach(AnalysisPannel analysisPannel in pannel.AnalysisPannels)
+            {
+                //Selects the analysis pannel to remove
+                var analysisPannelToRemove = await _context.AnalysisPannel.Include(ap => ap.DataDisplay).Include(dd => dd.DataDisplay.DataDisplayDatas).Where(ap => ap == analysisPannel).FirstOrDefaultAsync();
+                //if it was the only analysis pannel containing this display, deletes the data display
+                if (await _context.AnalysisPannel.Where(ap => ap.DataDisplay == analysisPannelToRemove.DataDisplay).CountAsync() == 1)
+                {
+                    foreach(DataDisplayData dataDisplayData in analysisPannelToRemove.DataDisplay.DataDisplayDatas)
+                    {
+                        _context.DataDisplayData.Remove(dataDisplayData);
+                    }
+                    _context.DataDisplay.Remove(analysisPannelToRemove.DataDisplay);
+                }
+                _context.AnalysisPannel.Remove(analysisPannel);
+            }
+
             _context.Pannel.Remove(pannel);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));

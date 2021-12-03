@@ -28,9 +28,10 @@ namespace DuneDaqMonitoringPlatform.Models
         [StringLength(30)]
         [Display(Name = "Storage type")]
         public string Storage { get; set; }
-
+        [Display(Name = "Run number")]
         public int Run { get; set; }
         public int SubRun { get; set; }
+        [Display(Name = "Trigger record")]
         public int EventNumber { get; set; }
 
     }

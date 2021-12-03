@@ -99,10 +99,19 @@ namespace DuneDaqMonitoringPlatform.Hubs
                         {
                             List<string> paths = dataPaths.Where(dp => UnixToDatetime(dp.WriteTime) <= chartDatasOrderedTime).Select(dp => dp.Path).ToList();
                             List<string> storages = dataPaths.Where(dp => UnixToDatetime(dp.WriteTime) <= chartDatasOrderedTime).Select(dp => dp.Storage).ToList();
+                            List<string> times = dataPaths.Where(dp => UnixToDatetime(dp.WriteTime) <= chartDatasOrderedTime).Select(dp => ChartHub.UnixToDatetime(dp.WriteTime).ToString()).ToList();
+                            int run = dataPaths.Where(dp => UnixToDatetime(dp.WriteTime) <= chartDatasOrderedTime).Select(dp => dp.Run).FirstOrDefault();
+
+                            /*
+                            List<string> paths = (  
+                                from dp in dataPaths
+                                where UnixToDatetime(dp.WriteTime) <= chartDatasOrderedTime
+                                select dp.Path
+                                ).ToList();*/
 
                             DataDisplay dataDisplay = monitoringDbContext.DataDisplay.Where(dd => dd.Id == dataDisplayGuid).Include(dd => dd.DataType).FirstOrDefault();
 
-                            chartDataMessenger.ChartDataMessage(new ChartData { Paths = paths, dataId = dataPaths.First().Data.Id, IsInit = false, DataDisplay = dataDisplay, SubscribedClients = subscribedClients, dataStorages = storages});
+                            chartDataMessenger.ChartDataMessage(new ChartData { Paths = paths, runNumber = run, dataId = dataPaths.First().Data.Id, IsInit = false, DataDisplay = dataDisplay, SubscribedClients = subscribedClients, dataStorages = storages, WriteTimes = times });
                         }                        
                     }
                     //Possibly implement thread interupt or pause here from the javascrip, Will neet to send a thread identifier to client and story list of active UpdateDisplayFromTime threads statically
@@ -132,10 +141,12 @@ namespace DuneDaqMonitoringPlatform.Hubs
                 List<DataPath> dataPaths = monitoringDbContext.DataDisplayData.Where(ddd => ddd.Data == data && ddd.DataDisplay.Id == dataDisplayGuid).Select(ddd => ddd.Data.DataPaths.Where(dp => dp.Path != "").OrderByDescending(dp => dp.WriteTime).ToList()).FirstOrDefault();
                 List<string> paths = dataPaths.Where(dp => roundToSecond(dp.WriteTime) <= startTime).Select(dp => dp.Path).ToList();
                 List<string> storages = dataPaths.Where(dp => roundToSecond(dp.WriteTime) <= startTime).Select(dp => dp.Storage).ToList();
+                List<string> times = dataPaths.Where(dp => roundToSecond(dp.WriteTime) <= startTime).Select(dp => ChartHub.UnixToDatetime(dp.WriteTime).ToString()).ToList();
+                int run = dataPaths.Where(dp => roundToSecond(dp.WriteTime) <= startTime).Select(dp => dp.Run).FirstOrDefault();
 
                 DataDisplay dataDisplay = monitoringDbContext.DataDisplay.Where(dd => dd.Id == dataDisplayGuid).Include(dd => dd.DataType).FirstOrDefault();
 
-                chartDataMessenger.ChartDataMessage(new ChartData { Paths = paths, dataId = data.Id, IsInit = true, DataDisplay = dataDisplay, SubscribedClients = subscribedClients, dataStorages = storages });
+                chartDataMessenger.ChartDataMessage(new ChartData { Paths = paths, runNumber = run, dataId = data.Id, IsInit = true, DataDisplay = dataDisplay, SubscribedClients = subscribedClients, dataStorages = storages, WriteTimes = times });
             }
 
 
@@ -164,10 +175,13 @@ namespace DuneDaqMonitoringPlatform.Hubs
                 List<DataPath> dataPaths = monitoringDbContext.DataDisplayData.Where(ddd => ddd.Data == data && ddd.DataDisplay.Id == dataDisplayGuid).Select(ddd => ddd.Data.DataPaths.Where(dp => dp.Path != "").OrderByDescending(dp => dp.WriteTime).ToList()).FirstOrDefault().ToList();
                 List<string> paths = dataPaths.Select(dp => dp.Path).ToList();
                 List<string> storages = dataPaths.Select(dp => dp.Storage).ToList();
+                List<string> times = dataPaths.Select(dp => ChartHub.UnixToDatetime(dp.WriteTime).ToString()).ToList();
+                int run = dataPaths.Select(dp => dp.Run).FirstOrDefault();
+
 
                 DataDisplay dataDisplay = monitoringDbContext.DataDisplay.Where(dd => dd.Id == dataDisplayGuid).Include(dd => dd.DataType).FirstOrDefault();
 
-                chartDataMessenger.ChartDataMessage(new ChartData { Paths = paths, dataId = data.Id, IsInit = true, DataDisplay = dataDisplay, SubscribedClients = subscribedClients, dataStorages = storages });
+                chartDataMessenger.ChartDataMessage(new ChartData { Paths = paths, runNumber = run, dataId = data.Id, IsInit = true, DataDisplay = dataDisplay, SubscribedClients = subscribedClients, dataStorages = storages, WriteTimes = times });
             }
         }
 
@@ -199,7 +213,7 @@ namespace DuneDaqMonitoringPlatform.Hubs
         public static List<ConnectedClient> ConnectedClients = new List<ConnectedClient>();
 
 
-        public DateTime UnixToDatetime(string time)
+        public static DateTime UnixToDatetime(string time)
         {
             //Convert the microsecond to second
             long timeLong = long.Parse(Regex.Replace(time, "[^0-9]", "").Substring(0, 10));

@@ -5,13 +5,16 @@
 }
 
 <h1>Details @Model.Name</h1>
-<h3>Details @Model.Description</h3>
+<h3>@Model.Description</h3>
+
 
 <form asp-action="DetailsStatic" asp-route-id="@Model.Id" method="get" target="_blank">
     <input type="datetime-local" id="startTime" name="startTime" step="1">
     <input type="submit" value="Jump to time">
 </form>
 
+<h4 id="runNumber"></h4>
+<h4 id="triggerRecord"></h4>
 
 <div class="row" id="plotsContainer">
     <script>var dataDisplayIdList = []</script>

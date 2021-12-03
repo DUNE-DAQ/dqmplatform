@@ -16,13 +16,18 @@
 </form>
 <button id="StartDisplayAtTime" onclick="StartDisplayAtTime()">Restart from here</button>
 
+<h4 id="runNumber"></h4>
+<h4 id="triggerRecord"></h4>
+
+
 <div class="row" id="plotsContainer">
     <script>var dataDisplayIdList = []</script>
     @for (var i = 0; i < ViewBag.DataDisplayIdList.Count; i++)
     {
 
-<div id="chartPlaceholder@(ViewBag.DataDisplayIdList[i])" class="column"> </div> //Informs the hub about the Data displays requested by the client
-<script>dataDisplayIdList['@i'] = ('@ViewBag.DataDisplayIdList[i]')</script>}
+        <div id="chartPlaceholder@(ViewBag.DataDisplayIdList[i])" class="column"> </div> //Informs the hub about the Data displays requested by the client
+        <script>dataDisplayIdList['@i'] = ('@ViewBag.DataDisplayIdList[i]')</script>
+}
 </div>
 
 <div>

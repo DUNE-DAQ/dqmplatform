@@ -70,6 +70,7 @@ namespace DuneDaqMonitoringPlatform.Hubs
                         List<string> yLabelsArray = new List<string>();
                         List<string> seriesLabelsArray = new List<string>();
                         DataBSON dataBSON = new DataBSON();
+                        string metadata = "";
                         //Chooses the reading function according to the storage type
                         switch (chartData.dataStorages[pathNumber])
                         {
@@ -78,11 +79,13 @@ namespace DuneDaqMonitoringPlatform.Hubs
                                 break;
                             case "BSON":
                                 dataBSON = await DataBSONReader(pathConverted);
+                                //dataBSON = DataBSONReader2(pathConverted);
                                 dataArray = dataBSON.Datas;
                                 chartLabelsArray = dataBSON.ChartLabels;
                                 seriesLabelsArray = dataBSON.SeriesLabels;
                                 xLabelsArray = dataBSON.LabelXs;
                                 yLabelsArray = dataBSON.LabelYs;
+                                metadata = dataBSON.Metadata;
                                 break;
                             default:
                                 dataArray = await DataStructuredFileReader(pathConverted);
@@ -91,14 +94,11 @@ namespace DuneDaqMonitoringPlatform.Hubs
 
                         if(dataArray != null && chartLabelsArray != null && seriesLabelsArray != null && xLabelsArray != null && yLabelsArray != null)
                         {
-                            ChartUpdate chartUpdate = new ChartUpdate { ChartName = "chartPlaceholder" + chartData.DataDisplay.Id, DataId = chartData.dataId.ToString(), YLabels = yLabelsArray.ToArray(), XLabels = xLabelsArray.ToArray(), SeriesLabels = seriesLabelsArray.ToArray(), ChartLabels = chartLabelsArray.ToArray(), ChartType = chartData.DataDisplay.DataType.PlottingType, IsInit = chartData.IsInit, DataDisplayName = chartData.DataDisplay.Name, ChartLength = chartData.DataDisplay.PlotLength, ChartData = dataArray.ToArray() };
+                            ChartUpdate chartUpdate = new ChartUpdate { ChartName = "chartPlaceholder" + chartData.DataDisplay.Id, runNumber = chartData.runNumber.ToString() , DataId = chartData.dataId.ToString(), Metadata = metadata, YLabels = yLabelsArray.ToArray(), XLabels = xLabelsArray.ToArray(), SeriesLabels = seriesLabelsArray.ToArray(), ChartLabels = chartLabelsArray.ToArray(), ChartType = chartData.DataDisplay.DataType.Name, ChartPlottingType = chartData.DataDisplay.DataType.PlottingType, IsInit = chartData.IsInit, DataDisplayName = chartData.DataDisplay.Name, ChartLength = chartData.DataDisplay.PlotLength, ChartData = dataArray.ToArray(), ChartTime = chartData.WriteTimes.First() };
 
                             Console.WriteLine("Finish reading data, \t round: " + PerformenceTimer.TimerVariable.executionRound.ToString() + " Time elapsed (ms): " + ((DateTime.Now.Ticks - PerformenceTimer.TimerVariable.executionTime) / 10000).ToString());
 
-
                             DataSender(chartUpdate, "ReceivePlotUpdate", chartData.SubscribedClients);
-
-
 
                             //Check if the data length requested has been reached
                             fileSerieLength += dataArray[0].Count();
@@ -106,6 +106,7 @@ namespace DuneDaqMonitoringPlatform.Hubs
                             if (chartData.DataDisplay.PlotLength == 0) { break; }
                             //Else displays util size reached
                             else if (fileSerieLength >= chartData.DataDisplay.PlotLength) { break; }
+
                         }
                     }
                     catch (Exception exception)

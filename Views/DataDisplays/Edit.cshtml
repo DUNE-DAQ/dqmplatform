@@ -27,7 +27,7 @@
             <div class="form-group">
                 <label class="control-label">Data type</label>
 
-                @Html.DropDownList("dataTypeId", new SelectList(ViewBag.DataTypes, "Id", "Name", Model.DataType.Id), new { @class = "form-control" })
+                @Html.DropDownList("dataTypeId", new SelectList(ViewBag.DataTypes, "Id", "Description", Model.DataType.Id), new { @class = "form-control" })
 
             </div>
             <div class="form-group">
