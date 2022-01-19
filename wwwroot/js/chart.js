@@ -35,6 +35,44 @@ if (typeof (document.getElementById('sendButton')) != 'undefined' && document.ge
     });
 }
 
+if (typeof (document.getElementById('requestAnalysisButton')) != 'undefined' && document.getElementById('requestAnalysisButton') != null) {    // Exists.
+
+    function findGetParameter(parameterName) {
+        var result = null,
+            tmp = [];
+        location.search
+            .substr(1)
+            .split("&")
+            .forEach(function (item) {
+                tmp = item.split("=");
+                if (tmp[0] === parameterName) result = decodeURIComponent(tmp[1]);
+            });
+        return result;
+    }
+
+    var getChannelNumber = findGetParameter("channel");
+
+    var getIdData = findGetParameter("idData");
+
+    var getCurve = findGetParameter("curve");
+
+    document.getElementById("requestAnalysisButton").addEventListener("click", function () {
+        var analysisId = document.getElementById("AnalyseId").value;
+
+        connection.invoke("GetAnalysis", analysisId, getChannelNumber, getIdData, getCurve).catch(function (err) {
+            return console.error(err.toString());
+        });
+        //event.preventDefault();
+    });
+}
+
+connection.on("CreateDivFromGuid", function (guid) {
+    var element = document.createElement("div");
+    element.setAttribute("id", "chartPlaceholder" + guid);
+    element.setAttribute("class", "column");
+    document.getElementById('plotsContainer').appendChild(element);
+});
+
 function StartDisplayAtTime() {
     const urlParams = new URLSearchParams(window.location.search);
     const startTime = urlParams.get('startTime');
@@ -141,7 +179,7 @@ connection.on("ReceivePlotUpdate", function (plotUpdate) {
     tickvals: [...Array(plotUpdate.chartData[0].length).keys()],
     ticktext: HideLabels(plotUpdate.xLabels, 20),
     */
-
+    //plotUpdate.xLabels[0] = '<a href="www.google.com">Residential</a>'
     switch (plotUpdate.chartType) {
         case "markers":
         case "lines":
@@ -149,6 +187,7 @@ connection.on("ReceivePlotUpdate", function (plotUpdate) {
             data = UpdateY(plotUpdate, data, plotUpdate.seriesLabels);
             layout = {
                 title: plotUpdate.dataDisplayName + " updated: " + plotUpdate.chartTime + " UTC",
+                hovermode: 'closest',
                 xaxis: {
                     title: {
                         text: plotUpdate.chartLabels[0],
@@ -221,7 +260,27 @@ connection.on("ReceivePlotUpdate", function (plotUpdate) {
     //react faster but does not manage concurrent request, if request too close in time, jsut ignores them....
 
     Plotly.newPlot(plotUpdate.chartName, data, layout);
+    var eventHandlerSelector = document.getElementById(plotUpdate.chartName)
+    eventHandlerSelector.on('plotly_click', function (data) {
 
+        
+        var channelNumber,
+            idData,
+            curve;
+        for (var i = 0; i < data.points.length; i++) {
+            var pointNumber = data.points[i].pointNumber;
+            channelNumber = plotUpdate.xLabels[pointNumber];
+            idData = data.points[i].data.traceId;
+            curve = data.points[i].curveNumber;
+        };
+
+        window.location.href = '../Analysis?' + "channel=" + channelNumber + "&idData=" + idData + "&curve=" + curve;
+
+        /*
+        connection.invoke("GetAnalysis", channelNumber, idData, curve).catch(function (err) {
+            return console.error(err.toString());
+        });*/
+    });
     /*
     if (plotUpdate.isInit) {
         Plotly.newPlot(plotUpdate.chartName, data, layout);
@@ -232,7 +291,7 @@ connection.on("ReceivePlotUpdate", function (plotUpdate) {
     }
     */
 
-    var t1 = performance.now()
+        var t1 = performance.now();
     console.log("Call to plot took " + (t1 - t0) + " milliseconds.")
 });
 

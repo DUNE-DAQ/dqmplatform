@@ -12,6 +12,7 @@ namespace DuneDaqMonitoringPlatform.Models
         
         public ICollection<AnalysisParameter> AnalysisParameters { get; set; }
         public ICollection<DataDisplayAnalyse> DataDisplayAnalyses { get; set; }
+        public ICollection<DataAnalyse> DataAnalyses { get; set; }
         public AnalysisSource AnalysisSource { get; set; }
         public Data Data { get; set; }
 

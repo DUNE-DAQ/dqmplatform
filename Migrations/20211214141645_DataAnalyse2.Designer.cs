@@ -3,15 +3,17 @@ using System;
 using DuneDaqMonitoringPlatform.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace DuneDaqMonitoringPlatform.Migrations
 {
     [DbContext(typeof(MonitoringDbContext))]
-    partial class MonitoringDbContextModelSnapshot : ModelSnapshot
+    [Migration("20211214141645_DataAnalyse2")]
+    partial class DataAnalyse2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -364,56 +366,56 @@ namespace DuneDaqMonitoringPlatform.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("78704bbe-cfa1-4cc2-af3d-c05fb2e5a2f8"),
+                            Id = new Guid("0b2f3718-f37f-43d4-9feb-42fd1dd77c25"),
                             Description = "Default heatmap plotting",
                             Name = "heatmap",
                             PlottingType = "standard"
                         },
                         new
                         {
-                            Id = new Guid("5e6e0a5f-7263-4193-a335-2c7e27ac69c1"),
+                            Id = new Guid("da685200-8463-4263-b64a-f083d95c7ca9"),
                             Description = "Default histogram plotting",
                             Name = "histogram",
                             PlottingType = "standard"
                         },
                         new
                         {
-                            Id = new Guid("c5818fd6-3442-4e7c-a6c7-dfa9d4710e63"),
+                            Id = new Guid("ad36747d-ffa2-497d-880d-2874c8e1c229"),
                             Description = "Default scatter plotting, Scatter plot with lines and markers",
                             Name = "lines+markers",
                             PlottingType = "standard"
                         },
                         new
                         {
-                            Id = new Guid("746448f1-6e53-4c83-9484-f6abc2f07431"),
+                            Id = new Guid("17e0d1fa-063f-41c6-b868-148e58afa507"),
                             Description = "Scatter plot with lines (no markers)",
                             Name = "lines",
                             PlottingType = "standard"
                         },
                         new
                         {
-                            Id = new Guid("49684b8d-b2f4-4cdc-aba9-a023626d15ac"),
+                            Id = new Guid("2a8ce785-c2f0-4e87-948b-56b01a24571f"),
                             Description = "Scatter plot with markers (no lines)",
                             Name = "markers",
                             PlottingType = "standard"
                         },
                         new
                         {
-                            Id = new Guid("b6131d73-e825-492c-a0df-a43fa53ad09a"),
+                            Id = new Guid("d97d4dd7-a818-4ded-add3-897c51e687f1"),
                             Description = "Default scatter plotting, Scatter plot with lines and markers, with log scale",
                             Name = "lines+markers",
                             PlottingType = "log"
                         },
                         new
                         {
-                            Id = new Guid("2269af8d-94ad-4c5e-a999-6fb51968e9cd"),
+                            Id = new Guid("d01159f2-00a0-49fc-9022-b6901939b888"),
                             Description = "Scatter plot with markers (no lines), with log scale",
                             Name = "lines",
                             PlottingType = "log"
                         },
                         new
                         {
-                            Id = new Guid("92478ff8-3168-4410-ae9e-560420486dc8"),
+                            Id = new Guid("5f2ef2b2-73e7-4bd2-b5d4-a8c14376d517"),
                             Description = "Scatter plot with lines (no markers), with log scale",
                             Name = "markers",
                             PlottingType = "log"
@@ -489,7 +491,7 @@ namespace DuneDaqMonitoringPlatform.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("18a73f0e-5b9f-4ab0-b210-7386fac7d05a"),
+                            Id = new Guid("51629972-0c64-4cf0-90fd-3db1a98986d7"),
                             Description = "Default 1:1 sampling",
                             Factor = 1f,
                             Name = "Default",
@@ -566,7 +568,7 @@ namespace DuneDaqMonitoringPlatform.Migrations
                         .WithMany("DataAnalyses")
                         .HasForeignKey("AnalyseId");
 
-                    b.HasOne("DuneDaqMonitoringPlatform.Models.Data", null)
+                    b.HasOne("DuneDaqMonitoringPlatform.Models.Data", "Data")
                         .WithMany("DataAnalyses")
                         .HasForeignKey("DataId");
 

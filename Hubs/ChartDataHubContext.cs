@@ -64,7 +64,7 @@ namespace DuneDaqMonitoringPlatform.Hubs
                     {
                         Console.WriteLine("Start Reading data, \t round: " + PerformenceTimer.TimerVariable.executionRound.ToString() + " Time elapsed (ms): " + ((DateTime.Now.Ticks - PerformenceTimer.TimerVariable.executionTime) / 10000).ToString());
 
-                        List<int[]> dataArray = new List<int[]>();
+                        List<float[]> dataArray = new List<float[]>();
                         List<string> chartLabelsArray = new List<string>();
                         List<string> xLabelsArray = new List<string>();
                         List<string> yLabelsArray = new List<string>();
@@ -108,6 +108,7 @@ namespace DuneDaqMonitoringPlatform.Hubs
                             else if (fileSerieLength >= chartData.DataDisplay.PlotLength) { break; }
 
                         }
+                    
                     }
                     catch (Exception exception)
                     {
@@ -120,9 +121,9 @@ namespace DuneDaqMonitoringPlatform.Hubs
             }
         }
 
-        private async Task<List<int[]>> DataStructuredFileReader(string pathConverted)
+        private async Task<List<float[]>> DataStructuredFileReader(string pathConverted)
         {
-            List<int[]> dataArray = new List<int[]>();
+            List<float[]> dataArray = new List<float[]>();
 
             string lines = await System.IO.File.ReadAllTextAsync(pathConverted);
 
@@ -131,7 +132,7 @@ namespace DuneDaqMonitoringPlatform.Hubs
             for (int i = 2; i < linesToArray.Length - 1; i += 2)
             {
                 int[] histogramsData = new int[linesToArray[i].Length];
-                dataArray.Add(Array.ConvertAll(linesToArray[i].Split(' ').Where(n => n != "").ToArray(), int.Parse));
+                dataArray.Add(Array.ConvertAll(linesToArray[i].Split(' ').Where(n => n != "").ToArray(), float.Parse));
             }
             return dataArray;
         }

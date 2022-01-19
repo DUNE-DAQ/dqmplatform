@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using DuneDaqMonitoringPlatform.Data;
 using DuneDaqMonitoringPlatform.Models;
 using Microsoft.AspNetCore.Authorization;
+using DuneDaqMonitoringPlatform.Services;
 
 namespace DuneDaqMonitoringPlatform.Controllers
 {
@@ -63,48 +64,21 @@ namespace DuneDaqMonitoringPlatform.Controllers
 
             foreach (Models.Data data in datas.Where(d => d.Name.Contains("fft_sums") && d.Name.Contains("plane") && !d.Name.Contains("plane_3")))
             {
-                CreateDataDisplay(dataSource, data, pannel, "lines", "log", "Default");
+                DbItemCreation.CreateDataDisplay(_context, dataSource, data, pannel, "lines", "log", "Default");
             }
             foreach (Models.Data data in datas.Where(d => d.Name.Contains("raw") && d.Name.Contains("plane")))
             {
-                CreateDataDisplay(dataSource, data, pannel, "heatmap", "standard", "Default");
+                DbItemCreation.CreateDataDisplay(_context, dataSource, data, pannel, "heatmap", "standard", "Default");
             }
             foreach (Models.Data data in datas.Where(d => d.Name.Contains("rmsm") && d.Name.Contains("plane")))
             {
-                CreateDataDisplay(dataSource, data, pannel, "markers", "standard", "Default");
+                DbItemCreation.CreateDataDisplay(_context, dataSource, data, pannel, "markers", "standard", "Default");
             }
 
             return RedirectToAction("Index", "Pannels");
         }
 
-        public void CreateDataDisplay(DataSource dataSource, Models.Data data, Pannel pannel, string plottignName, string plottignType, string samplingProfile)
-        {
-            DataDisplay dataDisplay = new DataDisplay();
-            dataDisplay.Id = Guid.NewGuid();
-            dataDisplay.DataType = _context.DataType.Where(d => d.PlottingType == plottignType && d.Name == plottignName).First();
-            dataDisplay.SamplingProfile = _context.SamplingProfile.Where(d => d.Name == samplingProfile).First();
-            dataDisplay.Name = dataSource.Source + " " + data.Name;
-            dataDisplay.PlotLength = 0;
 
-            //Create the intermediate table between datas and displays
-            DataDisplayData dataDisplayData = new DataDisplayData();
-            dataDisplayData.Id = Guid.NewGuid();
-            dataDisplayData.Data = data;
-            dataDisplayData.DataDisplay = dataDisplay;
-
-            //Create the intermediate table between pannels and displays
-            AnalysisPannel analysisPannel = new AnalysisPannel();
-            analysisPannel.Id = Guid.NewGuid();
-            analysisPannel.Pannel = pannel;
-            analysisPannel.DataDisplay = dataDisplay;
-
-            _context.Add(dataDisplayData);
-            _context.Add(dataDisplay);
-            _context.Add(analysisPannel);
-
-
-            _context.SaveChanges();
-        }
 
         // GET: DataSources/Details/5
         public async Task<IActionResult> Details(Guid? id)

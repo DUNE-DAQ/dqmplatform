@@ -12,7 +12,7 @@ namespace DuneDaqMonitoringPlatform.Models
         public ICollection<DataPath> DataPaths { get; set; }
         public ICollection<DataDisplayData> DataDisplayDatas { get; set; }
         public ICollection<Analyse> Analyses { get; set; }
-        
+        public ICollection<DataAnalyse> DataAnalyses { get; set; }
 
         public DataSource DataSource { get; set; }
 

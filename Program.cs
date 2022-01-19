@@ -1,5 +1,6 @@
 using DuneDaqMonitoringPlatform.Actions;
 using DuneDaqMonitoringPlatform.Hubs;
+using DuneDaqMonitoringPlatform.Services;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
@@ -20,7 +21,6 @@ namespace DuneDaqMonitoringPlatform
             var host = CreateHostBuilder(args).Build();
             new ChartDataHubContext((IHubContext<ChartHub>)host.Services.GetService(typeof(IHubContext<ChartHub>)));
             host.Run();
-
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>

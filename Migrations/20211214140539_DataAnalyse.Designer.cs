@@ -3,15 +3,17 @@ using System;
 using DuneDaqMonitoringPlatform.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace DuneDaqMonitoringPlatform.Migrations
 {
     [DbContext(typeof(MonitoringDbContext))]
-    partial class MonitoringDbContextModelSnapshot : ModelSnapshot
+    [Migration("20211214140539_DataAnalyse")]
+    partial class DataAnalyse
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -193,9 +195,6 @@ namespace DuneDaqMonitoringPlatform.Migrations
                     b.Property<int>("channel")
                         .HasColumnType("integer");
 
-                    b.Property<Guid?>("dataDisplayId")
-                        .HasColumnType("uuid");
-
                     b.Property<string>("description")
                         .HasColumnType("text");
 
@@ -204,8 +203,6 @@ namespace DuneDaqMonitoringPlatform.Migrations
                     b.HasIndex("AnalyseId");
 
                     b.HasIndex("DataId");
-
-                    b.HasIndex("dataDisplayId");
 
                     b.ToTable("DataAnalyse");
                 });
@@ -364,56 +361,56 @@ namespace DuneDaqMonitoringPlatform.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("78704bbe-cfa1-4cc2-af3d-c05fb2e5a2f8"),
+                            Id = new Guid("646bcb7f-6456-40dc-afaa-be8e6c132e5c"),
                             Description = "Default heatmap plotting",
                             Name = "heatmap",
                             PlottingType = "standard"
                         },
                         new
                         {
-                            Id = new Guid("5e6e0a5f-7263-4193-a335-2c7e27ac69c1"),
+                            Id = new Guid("6f4cbd62-5c5c-465d-bacf-19e97496ca72"),
                             Description = "Default histogram plotting",
                             Name = "histogram",
                             PlottingType = "standard"
                         },
                         new
                         {
-                            Id = new Guid("c5818fd6-3442-4e7c-a6c7-dfa9d4710e63"),
+                            Id = new Guid("04dee2fb-68b1-4793-ab7a-35ed52ad3320"),
                             Description = "Default scatter plotting, Scatter plot with lines and markers",
                             Name = "lines+markers",
                             PlottingType = "standard"
                         },
                         new
                         {
-                            Id = new Guid("746448f1-6e53-4c83-9484-f6abc2f07431"),
+                            Id = new Guid("cd78cb27-00a0-4e5d-b004-279244498506"),
                             Description = "Scatter plot with lines (no markers)",
                             Name = "lines",
                             PlottingType = "standard"
                         },
                         new
                         {
-                            Id = new Guid("49684b8d-b2f4-4cdc-aba9-a023626d15ac"),
+                            Id = new Guid("d414cf5b-246a-435b-bfde-251e380c3cce"),
                             Description = "Scatter plot with markers (no lines)",
                             Name = "markers",
                             PlottingType = "standard"
                         },
                         new
                         {
-                            Id = new Guid("b6131d73-e825-492c-a0df-a43fa53ad09a"),
+                            Id = new Guid("0a6afeb1-2399-4afb-ad7b-ba44fa516794"),
                             Description = "Default scatter plotting, Scatter plot with lines and markers, with log scale",
                             Name = "lines+markers",
                             PlottingType = "log"
                         },
                         new
                         {
-                            Id = new Guid("2269af8d-94ad-4c5e-a999-6fb51968e9cd"),
+                            Id = new Guid("cc934d36-7365-483a-9481-d89469048c38"),
                             Description = "Scatter plot with markers (no lines), with log scale",
                             Name = "lines",
                             PlottingType = "log"
                         },
                         new
                         {
-                            Id = new Guid("92478ff8-3168-4410-ae9e-560420486dc8"),
+                            Id = new Guid("9648c3dd-77e4-4e63-a65c-b8e27b0e8e27"),
                             Description = "Scatter plot with lines (no markers), with log scale",
                             Name = "markers",
                             PlottingType = "log"
@@ -489,7 +486,7 @@ namespace DuneDaqMonitoringPlatform.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("18a73f0e-5b9f-4ab0-b210-7386fac7d05a"),
+                            Id = new Guid("b97115b8-f059-4d38-afe4-37034534ac6f"),
                             Description = "Default 1:1 sampling",
                             Factor = 1f,
                             Name = "Default",
@@ -563,16 +560,12 @@ namespace DuneDaqMonitoringPlatform.Migrations
             modelBuilder.Entity("DuneDaqMonitoringPlatform.Models.DataAnalyse", b =>
                 {
                     b.HasOne("DuneDaqMonitoringPlatform.Models.Analyse", "Analyse")
-                        .WithMany("DataAnalyses")
+                        .WithMany()
                         .HasForeignKey("AnalyseId");
 
-                    b.HasOne("DuneDaqMonitoringPlatform.Models.Data", null)
-                        .WithMany("DataAnalyses")
+                    b.HasOne("DuneDaqMonitoringPlatform.Models.DataDisplay", "Data")
+                        .WithMany()
                         .HasForeignKey("DataId");
-
-                    b.HasOne("DuneDaqMonitoringPlatform.Models.DataDisplay", "dataDisplay")
-                        .WithMany("DataAnalyses")
-                        .HasForeignKey("dataDisplayId");
                 });
 
             modelBuilder.Entity("DuneDaqMonitoringPlatform.Models.DataDisplay", b =>

@@ -55,7 +55,7 @@ namespace DuneDaqMonitoringPlatform.Areas.Identity.Pages.Account
         }
 
         /// Code to redirect directly to CERN SSO¨, to remove when adding more SSO services
-        public IActionResult OnGetAsync()
+        /*public IActionResult OnGetAsync()
         {
             // Request a redirect to the external login provider.
             string provider = "CERN";
@@ -63,11 +63,11 @@ namespace DuneDaqMonitoringPlatform.Areas.Identity.Pages.Account
             var redirectUrl = Url.Page("./ExternalLogin", pageHandler: "Callback", values: new { returnUrl });
             var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
             return new ChallengeResult(provider, properties);
-        }
+        }*/
 
 
         //To uncomment for adding authentication variants
-        /*
+        
         public async Task OnGetAsync(string returnUrl = null)
         {
             if (!string.IsNullOrEmpty(ErrorMessage))
@@ -83,18 +83,11 @@ namespace DuneDaqMonitoringPlatform.Areas.Identity.Pages.Account
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
 
             ReturnUrl = returnUrl;
-        }*/
+        }
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
             returnUrl = returnUrl ?? Url.Content("~/");
-
-
-            ///To block external login
-            ModelState.AddModelError(string.Empty, "Invalid login attempt.");
-            return Page();
-            ///
-
 
             if (ModelState.IsValid)
             {

@@ -12,6 +12,8 @@ using Microsoft.AspNetCore.Mvc;
 using System.Threading;
 using System.Globalization;
 using System.Text.RegularExpressions;
+using DuneDaqMonitoringPlatform.Services;
+using Microsoft.AspNetCore.Hosting;
 
 namespace DuneDaqMonitoringPlatform.Hubs
 {
@@ -19,11 +21,13 @@ namespace DuneDaqMonitoringPlatform.Hubs
     {
         private readonly MonitoringDbContext monitoringDbContext;
         ChartDataMessenger chartDataMessenger;
+        KafkaProducer kafkaProducer;
 
-        public ChartHub(IConfiguration configuration)
+        public ChartHub(IConfiguration configuration, IWebHostEnvironment webHostEnvironment)
         {
             monitoringDbContext = new MonitoringDbContext(configuration);
             chartDataMessenger = ChartDataMessenger.Instance;
+            kafkaProducer = new KafkaProducer(configuration, webHostEnvironment);
         }
 
         public async Task UpdateTime(string time, string formatedTime)
@@ -184,6 +188,91 @@ namespace DuneDaqMonitoringPlatform.Hubs
                 chartDataMessenger.ChartDataMessage(new ChartData { Paths = paths, runNumber = run, dataId = data.Id, IsInit = true, DataDisplay = dataDisplay, SubscribedClients = subscribedClients, dataStorages = storages, WriteTimes = times });
             }
         }
+
+        //Hnadling the display of an analysis
+        public async void GetAnalysis(string analysisId, string channelNumber, string idData, string curve)
+        {
+            Analyse analyse = monitoringDbContext.Analyse.Find(Guid.Parse(analysisId));
+            Models.Data dataSource = monitoringDbContext.Data.Where(d => d.Id == Guid.Parse(idData.Substring(0, idData.Length - 2))).Include(d => d.DataSource).FirstOrDefault();
+            Guid guidDataDisplay;
+            DataDisplay dataDisplay;
+
+
+            string dataName = (analyse.Name + "_" + idData + "_" + channelNumber).Replace(' ', '_');
+            //search or create the quierried data (different from the data soruce, the data represents the processed source)
+            Models.Data data = monitoringDbContext.Data.Where(d => d.Name == dataName).Include(d => d.DataSource).FirstOrDefault();
+            if (data == null)
+            {
+                data = DbItemCreation.CreateData(monitoringDbContext, dataSource.DataSource, dataName);
+            }
+
+            //Creates the data display with analysis ID if doesn't exist
+            //Check if analysis existing, if yes gets it, else if null creates it 
+            //IEnumerable<DataAnalyse> dataAnalyse = monitoringDbContext.DataAnalyse.Include(da => da.Analyse).Where(da => da.Analyse == analyse).Where(da => da.channel == Int32.Parse(channelNumber)).Include(da => da.dataDisplay);
+            //IEnumerable<DataDisplay> dataDisplays = monitoringDbContext.DataAnalyse.Include(da => da.Analyse).Where(da => da.Analyse == analyse).Where(da => da.channel == Int32.Parse(channelNumber)).Include(da => da.dataDisplay).Select(da => da.dataDisplay);
+            List<DataDisplay> dataDisplays = monitoringDbContext.DataAnalyse.Include(da => da.Analyse).Where(da => da.Analyse == analyse).Where(da => da.channel == Int32.Parse(channelNumber)).Include(da => da.dataDisplay).Select(da => da.dataDisplay).ToList();
+            //Among selected, takes only the analyssis which's display contains the same data
+            //dataAnalyse = dataAnalyse.Where(da => da.dataDisplay.DataDisplayDatas)
+            DataDisplayData dataDisplayData = monitoringDbContext.DataDisplayData.Include(ddd => ddd.Data).Include(ddd => ddd.DataDisplay).Where(ddd => dataDisplays.Contains(ddd.DataDisplay)).Where(ddd => ddd.Data ==data).FirstOrDefault();
+
+            if (dataDisplayData == null)
+            {
+                guidDataDisplay = Guid.NewGuid();
+                dataDisplay = DbItemCreation.CreateDataDisplay(guidDataDisplay, monitoringDbContext, data.DataSource, data, "markers", "standard", "Default");
+                DbItemCreation.CreateDataAnalyse(monitoringDbContext, dataDisplay, data, analyse, curve, Int32.Parse(channelNumber));
+            }
+            else
+            {
+                dataDisplay = dataDisplayData.DataDisplay;
+                guidDataDisplay = dataDisplay.Id;
+            }
+            //creates the div in the page
+            await Clients.Caller.SendAsync("CreateDivFromGuid", guidDataDisplay.ToString());
+
+            var connectedClient = ConnectedClients.Where(c => c.IdClient == Context.ConnectionId).FirstOrDefault();
+            connectedClient.DataDisplayList.Add(guidDataDisplay);
+
+
+            //Send the Kafka message
+            await kafkaProducer.SendMessageAsync("TimeMean" + "," + Guid.Parse(idData.Substring(0, idData.Length - 2)) + "," + channelNumber + "," + dataName + "," + data.DataSource.Source + "," + "500");
+
+            //Subscribes the client to updates
+
+            //Use GetDisplayList function
+
+
+            
+
+        }
+        /*
+        public void CreateDataDisplayWithGuid(Guid dataDisplayGuid, DataSource dataSource, Models.Data data, Pannel pannel, string plottignName, string plottignType, string samplingProfile)
+        {
+            DataDisplay dataDisplay = new DataDisplay();
+            dataDisplay.Id = dataDisplayGuid
+            dataDisplay.DataType = _context.DataType.Where(d => d.PlottingType == plottignType && d.Name == plottignName).First();
+            dataDisplay.SamplingProfile = _context.SamplingProfile.Where(d => d.Name == samplingProfile).First();
+            dataDisplay.Name = dataSource.Source + " " + data.Name;
+            dataDisplay.PlotLength = 0;
+
+            //Create the intermediate table between datas and displays
+            DataDisplayData dataDisplayData = new DataDisplayData();
+            dataDisplayData.Id = Guid.NewGuid();
+            dataDisplayData.Data = data;
+            dataDisplayData.DataDisplay = dataDisplay;
+
+            //Create the intermediate table between pannels and displays
+            AnalysisPannel analysisPannel = new AnalysisPannel();
+            analysisPannel.Id = Guid.NewGuid();
+            analysisPannel.Pannel = pannel;
+            analysisPannel.DataDisplay = dataDisplay;
+
+            _context.Add(dataDisplayData);
+            _context.Add(dataDisplay);
+            _context.Add(analysisPannel);
+
+
+            _context.SaveChanges();
+        }*/
 
         //Rounds down the time to second son compraison doesn't get wronged by miliseconds
         private DateTime roundToSecond(string time)

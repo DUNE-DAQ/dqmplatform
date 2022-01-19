@@ -67,6 +67,14 @@ namespace DuneDaqMonitoringPlatform.Controllers
             return View(pannel);
         }
 
+        // GET: Pannels/Create
+        public IActionResult Analysis()
+        {
+            ViewBag.Analysis = _context.Analyse.Where(a => a.Name != "").ToList();
+
+            return View();
+        }
+
         [Authorize(Roles = "Administrator, User")]
         // GET: Pannels/Create
         public IActionResult Create()

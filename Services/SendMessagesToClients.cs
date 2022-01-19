@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -72,9 +73,12 @@ namespace DuneDaqMonitoringPlatform.Actions
                             paths.Add((input[2]));
                             List<string> storages = new List<string>();
                             storages.Add((input[3]));
+                            List<string> times = new List<string>();
+                            times.Add(ChartHub.UnixToDatetime(Path.GetFileName(input[2])).ToString());
                             //Data Id, .DataDisplay.DataType.PlottingType
-                            chartDataMessenger.ChartDataMessage(new ChartData { Paths = paths, IsInit = false, dataId = correspondingDataDisplayData.Data.Id, DataDisplay = correspondingDataDisplayData.DataDisplay, SubscribedClients = subscribedClients, dataStorages = storages });
+                            chartDataMessenger.ChartDataMessage(new ChartData { Paths = paths, runNumber = Int32.Parse(input[5]), IsInit = false, dataId = correspondingDataDisplayData.Data.Id, DataDisplay = correspondingDataDisplayData.DataDisplay, SubscribedClients = subscribedClients, dataStorages = storages, WriteTimes = times });
                             subscriber = true;
+                            
                         }
                     }
 

@@ -45,6 +45,8 @@ namespace DuneDaqMonitoringPlatform.Data
         public DbSet<DuneDaqMonitoringPlatform.Models.AnalysisPannel> AnalysisPannel { get; set; }
 
         public DbSet<DuneDaqMonitoringPlatform.Models.AnalysisResult> AnalysisResult { get; set; }
+        public DbSet<DuneDaqMonitoringPlatform.Models.DataAnalyse> DataAnalyse { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Entity<AnalysisSource>()
@@ -123,11 +125,14 @@ namespace DuneDaqMonitoringPlatform.Data
                 .OnDelete(DeleteBehavior.Cascade);
 
             //Seeding database
-            builder.Entity<DataType>().HasData(new DataType { Id = Guid.NewGuid(), Description = "Default heatmap plotting", Name = "Heatmap plot", PlottingType = "heatmap" });
-            builder.Entity<DataType>().HasData(new DataType { Id = Guid.NewGuid(), Description = "Default histogram plotting", Name = "Histogram plot", PlottingType = "histogram" });
-            builder.Entity<DataType>().HasData(new DataType { Id = Guid.NewGuid(), Description = "Default scatter plotting, Scatter plot with lines and markers", Name = "Scatter plot with lines and markers", PlottingType = "lines+markers" });
-            builder.Entity<DataType>().HasData(new DataType { Id = Guid.NewGuid(), Description = "Scatter plot without markers (lines only)", Name = "Scatter plot with lines", PlottingType="lines" });
-            builder.Entity<DataType>().HasData(new DataType { Id = Guid.NewGuid(), Description = "Scatter plot without lines (markers only)", Name = "Scatter plot with markers", PlottingType="markers" });
+            builder.Entity<DataType>().HasData(new DataType { Id = Guid.NewGuid(), Description = "Default heatmap plotting", Name = "heatmap", PlottingType = "standard" });
+            builder.Entity<DataType>().HasData(new DataType { Id = Guid.NewGuid(), Description = "Default histogram plotting", Name = "histogram", PlottingType = "standard" });
+            builder.Entity<DataType>().HasData(new DataType { Id = Guid.NewGuid(), Description = "Default scatter plotting, Scatter plot with lines and markers", Name = "lines+markers", PlottingType = "standard" });
+            builder.Entity<DataType>().HasData(new DataType { Id = Guid.NewGuid(), Description = "Scatter plot with lines (no markers)", Name = "lines", PlottingType= "standard" });
+            builder.Entity<DataType>().HasData(new DataType { Id = Guid.NewGuid(), Description = "Scatter plot with markers (no lines)", Name = "markers", PlottingType= "standard" });
+            builder.Entity<DataType>().HasData(new DataType { Id = Guid.NewGuid(), Description = "Default scatter plotting, Scatter plot with lines and markers, with log scale", Name = "lines+markers", PlottingType = "log" });
+            builder.Entity<DataType>().HasData(new DataType { Id = Guid.NewGuid(), Description = "Scatter plot with markers (no lines), with log scale", Name = "lines", PlottingType = "log" });
+            builder.Entity<DataType>().HasData(new DataType { Id = Guid.NewGuid(), Description = "Scatter plot with lines (no markers), with log scale", Name = "markers", PlottingType = "log" });
             builder.Entity<SamplingProfile>().HasData(new SamplingProfile { Id= Guid.NewGuid(), Description = "Default 1:1 sampling", Factor = 1, Name = "Default", PlottingType = "Default" });
 
 
